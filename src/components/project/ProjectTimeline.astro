@@ -1,0 +1,31 @@
+---
+interface Phase {
+  title: string;
+  items: string[];
+}
+
+interface Props {
+  phases: Phase[];
+}
+
+const { phases } = Astro.props;
+---
+
+<ol class="space-y-8 border-l border-[var(--border)] pl-6">
+  {
+    phases.map((phase, i) => (
+      <li>
+        <p class="text-xs font-medium text-[var(--accent)]">Phase {i + 1}</p>
+        <p class="mt-1 font-semibold text-[var(--fg)]">{phase.title}</p>
+        <ul class="mt-2 space-y-1 text-sm text-[var(--muted)]">
+          {phase.items.map((item) => (
+            <li class="flex items-center gap-2">
+              <span class="h-1 w-1 rounded-full bg-[var(--muted)]" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </li>
+    ))
+  }
+</ol>

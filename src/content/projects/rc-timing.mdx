@@ -1,0 +1,87 @@
+---
+title: Hybrid Vision + UWB RC Race Telemetry
+description: >-
+  An open-source RC race telemetry system combining a fixed overhead camera
+  with Ultra-Wideband tags — automatic lap timing, racing lines, and race
+  replay without expensive commercial timing gear. Concept stage.
+featured: false
+status: concept
+date: 2026-07-12
+hero: ../../assets/projects/rc-timing.svg
+tags:
+  - diy
+  - hardware
+  - computer-vision
+  - motorsport
+technologies:
+  - ESP32
+  - Ultra-Wideband (UWB)
+  - OpenCV
+  - AprilTags
+  - Kalman Filtering
+  - Web Dashboard
+difficulty: advanced
+license: Open source (license TBD)
+---
+
+import FeatureCard from '../../components/project/FeatureCard.astro';
+import Badge from '../../components/ui/Badge.astro';
+
+## Overview
+
+An exploration of combining computer vision and Ultra-Wideband (UWB) positioning into an affordable telemetry system for RC racing — automatic lap timing, racing line analysis, speed traces, sector comparisons, and race replay, the kind of data usually reserved for professional motorsport, without needing expensive commercial timing systems.
+
+Rather than relying on one tracking technology, the plan combines multiple sensors so each can cover the other's weaknesses.
+
+## The Idea
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <FeatureCard
+    title="Camera Vision"
+    description="A fixed camera overlooking the circuit tracks every car in real time. Computer vision continuously estimates each car's position, generating racing lines and speed data — the primary source for high-precision position estimation."
+    icon="lucide:camera"
+  />
+  <FeatureCard
+    title="UWB Identification & Recovery"
+    description="Each car carries a small ESP32-based UWB tag with a unique ID. Anchors around the track use it as a robust backup layer for:"
+    icon="lucide:radio"
+    items={[
+      'Automatic car ID at race start',
+      'Recovery when cars overlap or are occluded',
+      'Re-identification after leaving camera view',
+      'Redundant positioning when vision is unreliable',
+    ]}
+  />
+  <FeatureCard
+    title="Automatic Calibration"
+    description="Each UWB anchor doubles as a visual fiducial marker (an AprilTag). On startup, the camera detects these markers and calculates its position relative to the track, automatically aligning the visual and UWB coordinate systems — so the system can move between tracks with minimal manual setup."
+    icon="lucide:scan"
+  />
+</div>
+
+## Planned Features
+
+<div class="not-prose my-6 flex flex-wrap gap-2">
+  <Badge>Automatic lap timing</Badge>
+  <Badge>Live car position tracking</Badge>
+  <Badge>Racing line visualization</Badge>
+  <Badge>Speed heatmaps</Badge>
+  <Badge>Sector timing</Badge>
+  <Badge>Corner entry/exit speed analysis</Badge>
+  <Badge>Fastest lap comparison</Badge>
+  <Badge>Multi-car race replay</Badge>
+  <Badge>Driver performance analytics</Badge>
+  <Badge>Exportable telemetry data</Badge>
+  <Badge>Live spectator dashboard</Badge>
+  <Badge>Open API</Badge>
+</div>
+
+## Open Source
+
+Intended as an open-source platform others can build on — whether that's a timing system for a local RC club, driver telemetry collection, or just experimenting with computer vision and embedded hardware. The long-term goal is a modular ecosystem where hardware, firmware, and software are all openly documented, so advanced RC race analytics are accessible to anyone with a 3D printer, a few ESP32 boards, and a camera.
+
+Still concept stage — no hardware or code yet.
+
+## Origin
+
+This is the second life of "Axxelerate" — an RC-race timing app I wrote in 2016 (Ionic, Angular 1.6, Firebase) and listed on the app stores, back when I was first getting into frontend development. This concept picks the idea back up with a very different approach: vision + UWB instead of a phone app.

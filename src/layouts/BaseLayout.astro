@@ -1,0 +1,80 @@
+---
+import '../styles/global.css';
+import Nav from '../components/layout/Nav.astro';
+import Footer from '../components/layout/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+
+const { title, description, image, type = 'website' } = Astro.props;
+
+const siteName = 'blkPixel';
+const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image ?? '/favicon.svg', Astro.site);
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'blkPixel FlexCo',
+  alternateName: 'blkPixel',
+  url: Astro.site?.toString(),
+  founder: {
+    '@type': 'Person',
+    name: 'Oliver Tulla',
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const isDark = stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', isDark);
+      })();
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalURL} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} is:inline />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-md)] focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-[var(--accent-fg)]"
+    >
+      Skip to content
+    </a>
+    <Nav />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

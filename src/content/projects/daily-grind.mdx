@@ -1,0 +1,80 @@
+---
+title: Daily Grind
+description: >-
+  A PWA for teams to coordinate recurring chores and reward follow-through
+  with a shared points economy. Live, alpha.
+featured: false
+status: alpha
+date: 2026-05-31
+updated: 2026-06-01
+hero: ../../assets/projects/daily-grind.svg
+tags:
+  - webapp
+  - pwa
+technologies:
+  - Vue 3
+  - TypeScript
+  - Firebase
+  - Pinia
+  - jsQR
+difficulty: intermediate
+github: https://github.com/awsmoli/daily-grind
+demo: https://daily-grind-7d926.web.app
+license: All rights reserved
+---
+
+import FeatureCard from '../../components/project/FeatureCard.astro';
+
+## Overview
+
+Daily Grind helps small teams — families, roommates, friend groups, study groups — coordinate recurring responsibilities and reward follow-through with a shared points economy. Most task apps are built for individual productivity; this one is built around shared ownership, lightweight accountability, and a points ledger everyone can see.
+
+## Features
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <FeatureCard
+    title="First-Run Onboarding"
+    description="Two choices on first open: join a team via QR scanner, or create one after a quick email sign-up."
+    icon="lucide:door-open"
+  />
+  <FeatureCard
+    title="QR Team Join"
+    description="Camera-first QR scanning (via jsQR) joins a team instantly, with a fallback to type an invite code or link."
+    icon="lucide:qr-code"
+  />
+  <FeatureCard
+    title="Lists & Board"
+    description="Personal and shared task lists on a Todo / In Progress / Done board — moving a card assigns the current user automatically."
+    icon="lucide:kanban-square"
+  />
+  <FeatureCard
+    title="Points Economy"
+    description="Each team picks its own points unit at setup. Completing a task pays out automatically; every change writes an immutable ledger entry with a note."
+    icon="lucide:coins"
+  />
+  <FeatureCard
+    title="Team & Roles"
+    description="Admin and member roles, invite creation with a required intended member name, and member management."
+    icon="lucide:users"
+  />
+  <FeatureCard
+    title="Push Notifications"
+    description="Scheduled Cloud Functions check for due and cooldown-approaching recurring tasks and push a reminder."
+    icon="lucide:bell"
+  />
+  <FeatureCard
+    title="Installable PWA"
+    description="Installable app manifest plus Firestore offline persistence, so it keeps working through spotty connections."
+    icon="lucide:smartphone"
+  />
+</div>
+
+## What's Built
+
+The real screens exist: Welcome (the first-run join/create chooser), Login, Create Team, Join Team (QR + fallback code entry), Team Home (the board), Balance (points and the ledger), and Admin Settings. Task completion rewards points automatically, admins can adjust balances manually, and members can self-deduct — both require a note, and everything lands in the ledger.
+
+Still ahead: hardening the Firestore security rules for production, per-user/per-team notification preferences, and moving point mutations behind Cloud Functions so balance updates are fully server-authoritative instead of trusting the client.
+
+## Architecture
+
+Vue 3 + Vite frontend with Pinia for state and Vue Router, backed entirely by Firebase — Auth, Firestore (with offline persistence for local-first reads/writes), Cloud Functions for scheduled reminders, and Cloud Messaging for push. Deployed to Firebase Hosting via GitHub Actions on every push to `main`, with PR preview channels along the way.

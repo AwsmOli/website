@@ -1,0 +1,90 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import ProjectCard from '../components/project/ProjectCard.astro';
+import SkillsList from '../components/project/SkillsList.astro';
+
+const cv = await getEntry('pages', 'cv');
+if (!cv || cv.data.type !== 'cv') throw new Error('CV entry missing or malformed');
+
+const allProjects = await getCollection('projects');
+const featuredProjects = allProjects.filter((p) => p.data.featured).slice(0, 3);
+const projectsToShow = featuredProjects.length > 0 ? featuredProjects : allProjects.slice(0, 3);
+
+const recentExperience = cv.data.experience.slice(0, 4);
+---
+
+<BaseLayout
+  title="blkPixel"
+  description="Oliver Tulla — Software Engineer specialized in Frontend Development, Hybrid Apps, and Real-Time Data Visualization."
+>
+  <!-- Hero -->
+  <Container class="py-20 sm:py-28">
+    <p class="text-sm font-medium text-[var(--accent)]">Hi, I'm {cv.data.name}</p>
+    <h1 class="mt-3 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
+      {cv.data.role}
+    </h1>
+    <p class="mt-4 max-w-xl text-[var(--muted)]">
+      I build fast, reliable frontends and the occasional piece of hardware — currently at
+      Stillman Digital, and on my own projects here at blkPixel.
+    </p>
+    <div class="mt-8 flex gap-3">
+      <Button href="/projects">View Projects</Button>
+      <Button href="/contact" variant="secondary">Get in Touch</Button>
+    </div>
+  </Container>
+
+  <!-- Skills -->
+  <Container class="pb-20">
+    <SkillsList />
+  </Container>
+
+  <!-- Featured Projects -->
+  <Container class="pb-20">
+    <div class="flex items-center justify-between">
+      <h2 class="text-2xl font-bold tracking-tight">Featured Projects</h2>
+      <a href="/projects" class="text-sm text-[var(--accent)] hover:underline">View all &rarr;</a>
+    </div>
+    <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {projectsToShow.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </Container>
+
+  <!-- Experience Timeline -->
+  <Container class="pb-20">
+    <h2 class="text-2xl font-bold tracking-tight">Experience</h2>
+    <ol class="mt-6 space-y-6 border-l border-[var(--border)] pl-6">
+      {
+        recentExperience.map((role) => (
+          <li>
+            <p class="text-xs text-[var(--muted)]">
+              {role.start} &ndash; {role.end}
+            </p>
+            <p class="font-semibold">
+              {role.role} &middot; {role.company}
+            </p>
+            <p class="mt-1 text-sm text-[var(--muted)]">{role.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <a href="/cv" class="mt-6 inline-block text-sm text-[var(--accent)] hover:underline">
+      Full CV &rarr;
+    </a>
+  </Container>
+
+  <!-- Contact CTA -->
+  <Container class="pb-24">
+    <div
+      class="flex flex-col items-start justify-between gap-6 rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] p-8 sm:flex-row sm:items-center"
+    >
+      <div>
+        <h2 class="text-xl font-bold tracking-tight">Have a project in mind?</h2>
+        <p class="mt-1 text-[var(--muted)]">Always happy to talk frontend, trading systems, or hardware builds.</p>
+      </div>
+      <Button href="/contact">Contact Me</Button>
+    </div>
+  </Container>
+</BaseLayout>

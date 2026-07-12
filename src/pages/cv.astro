@@ -1,0 +1,118 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/ui/Container.astro';
+import Badge from '../components/ui/Badge.astro';
+import SkillsList from '../components/project/SkillsList.astro';
+
+const cv = await getEntry('pages', 'cv');
+if (!cv || cv.data.type !== 'cv') throw new Error('CV entry missing or malformed');
+
+const {
+  name,
+  role,
+  location,
+  email,
+  phone,
+  experience,
+  education,
+  certifications,
+  languages,
+  interests,
+  bucketList,
+} = cv.data;
+---
+
+<BaseLayout title="CV" description={`${name} — ${role}`}>
+  <Container class="py-16">
+    <header>
+      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{name}</h1>
+      <p class="mt-2 text-[var(--muted)]">{role}</p>
+      <p class="mt-2 text-sm text-[var(--muted)]">
+        {location} &middot; <a href={`mailto:${email}`} class="hover:text-[var(--accent)]">{email}</a>
+        {phone && <> &middot; {phone}</>}
+      </p>
+    </header>
+
+    <section class="mt-12">
+      <SkillsList />
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Experience</h2>
+      <ol class="mt-6 space-y-8 border-l border-[var(--border)] pl-6">
+        {
+          experience.map((job) => (
+            <li>
+              <p class="text-xs text-[var(--muted)]">
+                {job.start} &ndash; {job.end}
+              </p>
+              <p class="font-semibold">
+                {job.role} &middot; {job.company}
+                {job.location && <span class="font-normal text-[var(--muted)]"> — {job.location}</span>}
+              </p>
+              <p class="mt-1 text-sm text-[var(--muted)]">{job.description}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Education</h2>
+      <ul class="mt-4 space-y-3">
+        {
+          education.map((edu) => (
+            <li>
+              <p class="font-semibold">{edu.school}</p>
+              <p class="text-sm text-[var(--muted)]">
+                {edu.program} &middot; {edu.start} &ndash; {edu.end}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    {
+      certifications.length > 0 && (
+        <section class="mt-12">
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Certifications</h2>
+          <ul class="mt-4 space-y-1 text-sm text-[var(--muted)]">
+            {certifications.map((cert) => (
+              <li>{cert}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="mt-12">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Languages</h2>
+      <ul class="mt-4 flex gap-6 text-sm">
+        {
+          languages.map((lang) => (
+            <li>
+              <span class="font-medium">{lang.name}</span>{' '}
+              <span class="text-[var(--muted)]">— {lang.level}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Other Interests</h2>
+      <div class="mt-4 flex flex-wrap gap-2">
+        {interests.map((interest) => <Badge>{interest}</Badge>)}
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">Bucket List</h2>
+      <div class="mt-4 flex flex-wrap gap-2">
+        {bucketList.map((item) => <Badge variant="accent">{item}</Badge>)}
+      </div>
+    </section>
+  </Container>
+</BaseLayout>

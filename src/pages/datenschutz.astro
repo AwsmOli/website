@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/ui/Container.astro';
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="Privacy policy for blkpixel.com, in line with the GDPR and the Austrian Datenschutzgesetz (DSG)."
+>
+  <Container class="py-16">
+    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Privacy Policy</h1>
+    <p class="mt-3 max-w-xl text-[var(--muted)]">
+      Datenschutzerklärung — how this site handles data, in line with the GDPR and the Austrian
+      Datenschutzgesetz (DSG).
+    </p>
+
+    <article class="prose prose-neutral mt-10 max-w-none dark:prose-invert">
+      <h2>Data Controller</h2>
+      <p>
+        blkPixel FlexCo, represented by Oliver Tulla. Contact:{' '}
+        <a href="mailto:oliver@blkpixel.com">oliver@blkpixel.com</a>.
+      </p>
+
+      <h2>What This Site Collects</h2>
+      <p>
+        This site is static — there's no contact form, no account system, and no analytics or
+        tracking scripts installed. The only thing stored client-side is a dark/light theme
+        preference, saved via your browser's <code>localStorage</code>. It never leaves your
+        browser and isn't linked to you personally.
+      </p>
+      <p>
+        Like any web server, whichever hosting provider serves this site will process standard
+        technical connection data (e.g. IP address, request timestamp, user agent) in its access
+        logs, purely to deliver the page and keep the service secure. This is unavoidable for any
+        website and is processed under legitimate interest (Art. 6(1)(f) GDPR), not for tracking
+        or profiling.
+      </p>
+
+      <h2>Cookies</h2>
+      <p>
+        This site does not set cookies. The theme preference above uses{' '}
+        <code>localStorage</code>, not a cookie, and nothing is transmitted to a server.
+      </p>
+
+      <h2>Third Parties</h2>
+      <p>
+        Project pages link out to third-party services (e.g. GitHub, GitHub Pages, Firebase-hosted
+        demos, EasyEDA/OSHWLab, Onshape). Once you follow one of those links, that service's own
+        privacy policy applies — this policy only covers blkpixel.com itself.
+      </p>
+
+      <h2>Your Rights</h2>
+      <p>
+        Under the GDPR you have the right to access, rectify, or erase any personal data
+        concerning you, to restrict or object to its processing, and to data portability. Since
+        this site doesn't currently collect any personal data of its own, there's nothing on file
+        to request — but reach out to{' '}
+        <a href="mailto:oliver@blkpixel.com">oliver@blkpixel.com</a> with any questions. You also
+        have the right to lodge a complaint with the Austrian data protection authority
+        (Datenschutzbehörde).
+      </p>
+
+      <h2>Changes</h2>
+      <p>
+        This policy will be updated if the site adds anything that processes personal data — a
+        contact form or analytics, for example.
+      </p>
+    </article>
+  </Container>
+</BaseLayout>

@@ -1,0 +1,12 @@
+---
+import { getEntry } from 'astro:content';
+import Badge from '../ui/Badge.astro';
+
+const cv = await getEntry('pages', 'cv');
+if (!cv || cv.data.type !== 'cv') throw new Error('CV entry missing or malformed');
+---
+
+<h2 class="text-sm font-semibold uppercase tracking-wide text-(--muted)">Skills</h2>
+<div class="mt-4 flex flex-wrap gap-2">
+  {cv.data.skills.map((skill) => <Badge>{skill}</Badge>)}
+</div>

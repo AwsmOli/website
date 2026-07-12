@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #ffffff;
+  --color-fg: #18181b;
+  --color-muted: #52525b;
+  --color-border: #e4e4e7;
+  --color-surface: #fafafa;
+
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-fg: #ffffff;
+
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* CSS variables (not just Tailwind theme tokens) so non-utility code can read
+   them too, and so a future `.dark` override only has to redefine this block. */
+:root {
+  --bg: var(--color-bg);
+  --fg: var(--color-fg);
+  --muted: var(--color-muted);
+  --border: var(--color-border);
+  --surface: var(--color-surface);
+  --accent: var(--color-accent);
+  --accent-hover: var(--color-accent-hover);
+  --accent-fg: var(--color-accent-fg);
+}
+
+:root.dark {
+  --bg: #0a0a0b;
+  --fg: #f4f4f5;
+  --muted: #a1a1aa;
+  --border: #27272a;
+  --surface: #18181b;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-fg: #ffffff;
+}
+
+html {
+  color-scheme: light;
+  font-family: var(--font-sans);
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+::selection {
+  background-color: var(--accent);
+  color: var(--accent-fg);
+}

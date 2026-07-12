@@ -1,0 +1,20 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  placeholders: string[];
+}
+
+const { placeholders } = Astro.props;
+---
+
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  {
+    placeholders.map((label) => (
+      <div class="flex aspect-video flex-col items-center justify-center gap-2 rounded-[var(--radius-xl)] border border-dashed border-[var(--border)] text-[var(--muted)]">
+        <Icon name="lucide:image" class="h-6 w-6" />
+        <span class="text-sm">{label}</span>
+      </div>
+    ))
+  }
+</div>

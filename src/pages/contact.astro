@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import { Icon } from 'astro-icon/components';
+
+const channels = [
+  {
+    label: 'Email',
+    value: 'oliver@blkpixel.com',
+    href: 'mailto:oliver@blkpixel.com',
+    icon: 'lucide:mail',
+  },
+  {
+    label: 'GitHub',
+    value: 'github.com/awsmoli',
+    href: 'https://github.com/awsmoli',
+    icon: 'lucide:github',
+  },
+  {
+    label: 'LinkedIn',
+    value: 'linkedin.com/in/awsmoli',
+    href: 'https://www.linkedin.com/in/awsmoli/',
+    icon: 'lucide:linkedin',
+  },
+  {
+    label: 'Telegram',
+    value: '@callAwli',
+    href: 'https://t.me/callAwli',
+    icon: 'simple-icons:telegram',
+  },
+];
+---
+
+<BaseLayout
+  title="Contact"
+  description="Get in touch with Oliver Tulla / blkPixel — email, GitHub, or LinkedIn."
+>
+  <Container class="py-16">
+    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Contact</h1>
+    <p class="mt-3 max-w-xl text-[var(--muted)]">
+      Based in Vienna, Austria. The fastest way to reach me is email — happy to talk frontend
+      work, trading systems, or hardware builds.
+    </p>
+
+    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        channels.map((channel) => (
+          <Card href={channel.href} class="flex items-center gap-4 p-5">
+            <Icon name={channel.icon} class="h-6 w-6 text-[var(--accent)]" />
+            <div>
+              <p class="font-semibold">{channel.label}</p>
+              <p class="text-sm text-[var(--muted)]">{channel.value}</p>
+            </div>
+          </Card>
+        ))
+      }
+    </div>
+
+    <div class="mt-10">
+      <Button href="mailto:oliver@blkpixel.com">Send an Email</Button>
+    </div>
+  </Container>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+import { Icon } from 'astro-icon/components';
+import Card from '../ui/Card.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  icon?: string;
+  items?: string[];
+}
+
+const { title, description, icon, items = [] } = Astro.props;
+---
+
+<Card class="p-5">
+  {icon && <Icon name={icon} class="h-6 w-6 text-[var(--accent)]" />}
+  <h3 class="mt-3 font-semibold text-[var(--fg)]">{title}</h3>
+  <p class="mt-1 text-sm text-[var(--muted)]">{description}</p>
+  {
+    items.length > 0 && (
+      <ul class="mt-3 space-y-1 text-sm text-[var(--muted)]">
+        {items.map((item) => (
+          <li class="flex items-center gap-2">
+            <span class="h-1 w-1 rounded-full bg-[var(--muted)]" />
+            {item}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Card>

@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Card from '../ui/Card.astro';
+import Badge from '../ui/Badge.astro';
+import { statusBadgeVariant } from '../../lib/project-status';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, description, hero, status, technologies, duration } = project.data;
+
+const dateRange =
+  duration ??
+  project.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+---
+
+<Card href={`/projects/${project.id}`}>
+  <Image src={hero} alt={title} width={480} height={270} class="aspect-video w-full rounded-t-[var(--radius-xl)] object-cover" />
+  <div class="flex flex-col gap-3 p-5">
+    <div class="flex items-center justify-between gap-2">
+      <h3 class="font-semibold">{title}</h3>
+      <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
+    </div>
+    <p class="text-xs font-medium text-[var(--muted)]">{dateRange}</p>
+    <p class="text-sm text-[var(--muted)]">{description}</p>
+    <div class="flex flex-wrap gap-1.5">
+      {technologies.slice(0, 4).map((tech) => <Badge>{tech}</Badge>)}
+    </div>
+  </div>
+</Card>

@@ -1,0 +1,39 @@
+---
+import Container from '../ui/Container.astro';
+import { Icon } from 'astro-icon/components';
+
+const year = new Date().getFullYear();
+
+const links = [
+  { href: 'https://github.com/awsmoli', label: 'GitHub', icon: 'lucide:github' },
+  { href: 'https://www.linkedin.com/in/awsmoli/', label: 'LinkedIn', icon: 'lucide:linkedin' },
+  { href: 'mailto:oliver@blkpixel.com', label: 'Email', icon: 'lucide:mail' },
+];
+---
+
+<footer class="border-t border-[var(--border)]">
+  <Container class="flex flex-col items-center justify-between gap-4 py-8 text-sm text-[var(--muted)] sm:flex-row">
+    <div class="flex flex-col items-center gap-1 sm:items-start">
+      <p>&copy; {year} blkPixel FlexCo</p>
+      <p class="flex gap-3 text-xs">
+        <a href="/impressum" class="hover:text-[var(--accent)]">Impressum</a>
+        <a href="/datenschutz" class="hover:text-[var(--accent)]">Privacy Policy</a>
+      </p>
+    </div>
+    <ul class="flex items-center gap-4">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-label={link.label}
+              class="flex items-center gap-1 hover:text-[var(--accent)]"
+            >
+              <Icon name={link.icon} class="h-4 w-4" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</footer>

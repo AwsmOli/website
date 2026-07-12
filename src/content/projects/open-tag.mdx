@@ -1,0 +1,337 @@
+---
+title: OpenTag
+description: >-
+  An open-source, family-built laser tag system. PCB and blaster CAD model
+  are in progress; nothing printed or assembled yet.
+featured: true
+status: implementation
+date: 2026-07-12
+hero: ../../assets/projects/open-tag-cad.png
+gallery:
+  - ../../assets/projects/open-tag-pcb.png
+  - ../../assets/projects/open-tag-schematic.png
+tags:
+  - diy
+  - hardware
+  - gamedev
+  - open-source
+technologies:
+  - ESP32-S3 (Seeed XIAO)
+  - ESP-NOW
+  - C++ (Arduino)
+  - PCB Design
+  - 3D Printing
+  - Android (planned)
+difficulty: advanced
+license: Open source (license TBD)
+bom:
+  - name: Custom PCB ("SLG Bullpup" rev 1.0)
+    quantity: 1
+  - name: Seeed Studio XIAO ESP32-S3
+    quantity: 1
+  - name: MAX98357A audio amplifier
+    quantity: 1
+  - name: DRV8833 motor driver
+    quantity: 1
+  - name: SSD1306 OLED display
+    quantity: 1
+  - name: WS2812 addressable LEDs
+    quantity: 1
+  - name: 18650 Li-ion battery (3.7V, 1800mAh)
+    quantity: 1
+  - name: PLA 3D printing filament
+    quantity: 1
+---
+
+import FeatureCard from '../../components/project/FeatureCard.astro';
+import ProjectTimeline from '../../components/project/ProjectTimeline.astro';
+import ProjectGallery from '../../components/project/ProjectGallery.astro';
+import Card from '../../components/ui/Card.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Button from '../../components/ui/Button.astro';
+import { Image } from 'astro:assets';
+import schematic from '../../assets/projects/open-tag-schematic.png';
+import cadRender from '../../assets/projects/open-tag-cad.png';
+import pcbRender from '../../assets/projects/open-tag-pcb.png';
+
+<div class="not-prose mb-10 flex flex-wrap gap-3">
+  <Button href="#build-guide" variant="secondary">Build Guide</Button>
+</div>
+
+## About the Project
+
+OpenTag started as a summer holiday project I wanted to build together with my kids. Instead of buying an expensive commercial laser tag set, we decided it would be much more fun to design and build our own from scratch.
+
+What started as a simple family project quickly turned into something much bigger. Every challenge led to another idea, another feature, another opportunity to learn. Along the way we've been picking up electronics, PCB design, embedded programming, ESP32 development, 3D printing, optics, game design, and Android development.
+
+The goal isn't to compete with commercial laser tag systems. The goal is to create something that anyone can build, repair, customize, and improve. If this project inspires other families to spend a few weekends building something together instead of simply buying it, it's already achieved one of its biggest goals.
+
+## Design Philosophy
+
+OpenTag follows a few simple principles:
+
+- Completely open source
+- Built using widely available components
+- Printable on consumer 3D printers
+- Easy to repair
+- Modular
+- Easy to modify
+- Designed for learning
+- Community driven
+- Long-term maintainable
+
+## Features
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <FeatureCard
+    title="ESP32-S3 Powered"
+    description="Uses the Seeed Studio XIAO ESP32-S3 with ESP-NOW networking."
+    icon="lucide:cpu"
+  />
+  <FeatureCard
+    title="Wireless Multiplayer"
+    description="Fast peer-to-peer communication without requiring WiFi infrastructure."
+    icon="lucide:wifi"
+  />
+  <FeatureCard
+    title="Accurate IR Weapon System"
+    description="Collimated IR emitter for accurate hit detection and realistic gameplay."
+    icon="lucide:crosshair"
+  />
+  <FeatureCard
+    title="OLED Display"
+    description="Shows the essentials at a glance:"
+    icon="lucide:monitor"
+    items={['Health', 'Ammo', 'Score', 'Battery', 'Team', 'Game status']}
+  />
+  <FeatureCard
+    title="RGB Lighting"
+    description="Addressable LEDs provide:"
+    icon="lucide:sparkles"
+    items={[
+      'Team colours',
+      'Reload animations',
+      'Hit feedback',
+      'Low health warnings',
+      'Spawn protection',
+      'Weapon effects',
+    ]}
+  />
+  <FeatureCard
+    title="Sound"
+    description="Digital amplifier and speaker for:"
+    icon="lucide:volume-2"
+    items={['Firing sounds', 'Hit sounds', 'Announcements', 'Voice prompts']}
+  />
+  <FeatureCard
+    title="Haptic Feedback"
+    description="Vibration motor for:"
+    icon="lucide:vibrate"
+    items={['Firing', 'Reloads', 'Hits', 'Low health', 'Respawning']}
+  />
+  <FeatureCard
+    title="USB-C Charging"
+    description="Charging handled directly by the XIAO ESP32-S3."
+    icon="lucide:usb"
+  />
+  <FeatureCard
+    title="Modular PCB"
+    description="The custom PCB is intentionally designed around inexpensive plug-in modules instead of hard-to-solder ICs."
+    icon="lucide:circuit-board"
+  />
+</div>
+
+## Open Hardware
+
+OpenTag is intentionally designed using off-the-shelf parts. Builders can source components from suppliers like DigiKey, Mouser, Amazon, AliExpress, or local electronics stores.
+
+The PCB is designed around commonly available modules: the XIAO ESP32-S3, a MAX98357A audio amplifier, a DRV8833 motor driver, an SSD1306 OLED, and WS2812 LEDs. If a module breaks, it can simply be replaced — no proprietary electronics.
+
+### Schematic
+
+<div class="not-prose my-6">
+  <Image
+    src={schematic}
+    alt="OpenTag blaster wiring schematic"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)] object-cover"
+  />
+</div>
+
+The XIAO ESP32-S3 sits at the center and fans its GPIOs out to every subsystem: the IR emitter
+circuit (top right — a small resistor/capacitor network driving the IR LED for hit detection),
+the haptic feedback motor (through its driver board), the MAX98357A amp driving a small speaker,
+a physical button, and two "Frame" headers that break out to the addressable LED strips running
+along the blaster's frame. A power switch and a 470nF capacitor sit on the main VCC/GND rail for
+basic power filtering, with everything running off a single 3.7V 1800mAh 18650 Li-ion cell.
+
+### Bill of Materials
+
+<div class="not-prose my-6 overflow-x-auto rounded-[var(--radius-xl)] border border-[var(--border)]" id="bom">
+  <table class="w-full text-left text-sm">
+    <thead class="border-b border-[var(--border)] text-[var(--muted)]">
+      <tr>
+        <th class="px-4 py-2 font-medium">Component</th>
+        <th class="px-4 py-2 font-medium">Qty</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-[var(--border)]">
+        <td class="px-4 py-2">Custom PCB ("SLG Bullpup" rev 1.0)</td>
+        <td class="px-4 py-2">1</td>
+      </tr>
+      <tr class="border-b border-[var(--border)]">
+        <td class="px-4 py-2">Seeed Studio XIAO ESP32-S3</td>
+        <td class="px-4 py-2">1</td>
+      </tr>
+      <tr class="border-b border-[var(--border)]">
+        <td class="px-4 py-2">MAX98357A audio amplifier</td>
+        <td class="px-4 py-2">1</td>
+      </tr>
+      <tr class="border-b border-[var(--border)]">
+        <td class="px-4 py-2">DRV8833 motor driver</td>
+        <td class="px-4 py-2">1</td>
+      </tr>
+      <tr class="border-b border-[var(--border)]">
+        <td class="px-4 py-2">SSD1306 OLED display</td>
+        <td class="px-4 py-2">1</td>
+      </tr>
+      <tr class="border-b border-[var(--border)]">
+        <td class="px-4 py-2">WS2812 addressable LEDs</td>
+        <td class="px-4 py-2">1 strip</td>
+      </tr>
+      <tr class="border-b border-[var(--border)]">
+        <td class="px-4 py-2">18650 Li-ion battery (3.7V, 1800mAh)</td>
+        <td class="px-4 py-2">1</td>
+      </tr>
+      <tr>
+        <td class="px-4 py-2">PLA 3D printing filament</td>
+        <td class="px-4 py-2">1 spool</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+This is the core module list, not a full purchase-ready BOM yet — pricing, suppliers, and exact quantities (screws, wiring, 3D printed parts, enclosure hardware) are still being worked out.
+
+### Design Files
+
+- [CAD model (Onshape)](https://cad.onshape.com/documents/a1a90280417e8be1c7d0f663/w/0f385b1716e5e7a1f7a7d810/e/bd2f31d9cd24115b85b71367) — the bullpup blaster body, in progress
+- [PCB design (OSHWLab)](https://oshwlab.com/oliver39/project_ascqfjji) — "SLG Bullpup" rev 1.0, published and public
+
+## Planned Hardware Ecosystem
+
+<div class="not-prose my-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">Laser Tag Blaster</Card>
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">Player Vest</Card>
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">Respawn Beacon</Card>
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">Capture Point</Card>
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">King of the Hill Marker</Card>
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">Ammo Crate</Card>
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">Medic Station</Card>
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">Base Station</Card>
+  <Card class="p-4 text-center text-sm font-medium text-[var(--fg)]">Android Companion App</Card>
+</div>
+
+## Planned Game Modes
+
+<div class="not-prose my-6 flex flex-wrap gap-2">
+  <Badge>Team Deathmatch</Badge>
+  <Badge>Free For All</Badge>
+  <Badge>Capture the Flag</Badge>
+  <Badge>King of the Hill</Badge>
+  <Badge>Domination</Badge>
+  <Badge>Infection</Badge>
+  <Badge>Zombies</Badge>
+  <Badge>Battle Royale</Badge>
+  <Badge>VIP Escort</Badge>
+  <Badge>Last Man Standing</Badge>
+</div>
+
+## Android App
+
+A companion app is planned to round out the ecosystem, handling:
+
+- Player management
+- Team setup
+- Weapon configuration
+- Live scoreboard
+- Match timer
+- Statistics
+- OTA firmware updates
+- Match history
+- Game configuration
+- Real-time event tracking
+
+## Open Source
+
+Everything will be published once it's ready: PCB files, schematics, firmware, the Android app, STL files, CAD models, the BOM, an assembly guide, and build instructions.
+
+## Roadmap
+
+<div class="not-prose my-8" id="roadmap">
+  <ProjectTimeline
+    phases={[
+      {
+        title: 'Core electronics & multiplayer',
+        items: ['Core electronics', 'Working blaster', 'Hit detection', 'Multiplayer'],
+      },
+      {
+        title: 'Companion app & game modes',
+        items: ['Android app', 'Multiple game modes', 'Better UI'],
+      },
+      {
+        title: 'Arena devices',
+        items: ['Arena devices', 'OTA updates', 'Statistics'],
+      },
+      {
+        title: 'Community ecosystem',
+        items: ['Community ecosystem', 'Additional accessories', 'Documentation'],
+      },
+    ]}
+  />
+</div>
+
+## Build Guide
+
+<div class="not-prose my-6" id="build-guide">
+  <p class="text-[var(--muted)]">
+    Not written yet — Phase 1 (a working blaster and hit detection) needs to be done first.
+    Once there's something real to build, the step-by-step guide and full BOM will go here and
+    on GitHub.
+  </p>
+</div>
+
+## Gallery
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <figure class="m-0">
+    <Image
+      src={cadRender}
+      alt="OpenTag blaster CAD model"
+      class="aspect-video w-full rounded-[var(--radius-xl)] border border-[var(--border)] object-cover"
+    />
+    <figcaption class="mt-2 text-sm text-[var(--muted)]">CAD model</figcaption>
+  </figure>
+  <figure class="m-0">
+    <Image
+      src={pcbRender}
+      alt="OpenTag blaster PCB layout"
+      class="aspect-video w-full rounded-[var(--radius-xl)] border border-[var(--border)] object-cover"
+    />
+    <figcaption class="mt-2 text-sm text-[var(--muted)]">PCB layout</figcaption>
+  </figure>
+  <figure class="m-0">
+    <Image
+      src={schematic}
+      alt="OpenTag blaster wiring schematic"
+      class="aspect-video w-full rounded-[var(--radius-xl)] border border-[var(--border)] object-cover"
+    />
+    <figcaption class="mt-2 text-sm text-[var(--muted)]">Schematic</figcaption>
+  </figure>
+</div>
+
+<div class="not-prose my-4">
+  <ProjectGallery
+    placeholders={['3D printed parts', 'Assembly photos', 'Gameplay photos', 'Android app screenshots']}
+  />
+</div>

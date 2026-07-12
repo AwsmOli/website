@@ -1,0 +1,119 @@
+---
+title: Risk Trader
+description: >-
+  A professional trading operating system for discretionary traders —
+  enforces risk rules, journals every trade, and connects directly to
+  exchanges with zero-knowledge API key encryption.
+featured: true
+status: implementation
+date: 2026-05-19
+hero: ../../assets/projects/risk-trader.svg
+tags:
+  - service
+  - webapp
+  - fintech
+technologies:
+  - Vue 3
+  - TypeScript
+  - Fastify
+  - Supabase
+  - Pinia
+  - WebAuthn (Passkeys)
+  - Zod
+  - PostHog
+difficulty: advanced
+license: All rights reserved
+---
+
+import FeatureCard from '../../components/project/FeatureCard.astro';
+
+## Overview
+
+A trading operating system for discretionary traders that connects to exchanges via API and enforces structured risk management, execution discipline, and behavioral review. The focus is on reducing emotional trading mistakes, enforcing predefined rules, and helping traders refine their process over time — the kind of tooling normally only available in-house at prop firms.
+
+## Core Features
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <FeatureCard
+    title="Exchange Connectivity"
+    description="Connects to exchanges like Binance and Bybit via API — balances, positions, live orders, and trade history, streamed realtime over WebSocket."
+    icon="lucide:link-2"
+    items={['Spot and futures support']}
+  />
+  <FeatureCard
+    title="Unified Trading Terminal"
+    description="A dense, low-latency interface built for fast discretionary execution."
+    icon="lucide:layout-dashboard"
+    items={['Chart + order entry layout', 'DOM-style order ladder', 'Watchlists', 'Keyboard shortcuts']}
+  />
+  <FeatureCard
+    title="Risk-Based Position Sizing"
+    description="Calculates position size from account risk, entry, and stop loss — with estimated loss, leverage impact, and liquidation distance shown before you click buy."
+    icon="lucide:calculator"
+  />
+  <FeatureCard
+    title="Rule Enforcement Engine"
+    description="A configurable rules engine that validates every trade before execution — warn, require confirmation, or block outright."
+    icon="lucide:shield-check"
+    items={['Max risk per trade', 'Minimum R:R ratio', 'Daily loss limits', 'Cooldown after losses']}
+  />
+  <FeatureCard
+    title="Smart Order Execution"
+    description="Reduces slippage with post-only orders, laddered entries/exits, bracket orders, and automatic TP/SL placement."
+    icon="lucide:split"
+  />
+  <FeatureCard
+    title="Position Heat & Exposure"
+    description="Realtime view of total account risk, correlated positions, long/short bias, and exposure by asset — not just per-trade risk."
+    icon="lucide:flame"
+  />
+  <FeatureCard
+    title="Trading Journal"
+    description="Every trade logged automatically — entry/exit, size, PnL, and tags for setup, market conditions, and strategy."
+    icon="lucide:book-open"
+  />
+  <FeatureCard
+    title="Trade Replay & Review"
+    description="Scrub back through a session's chart, orders, and execution sequence to review decisions objectively."
+    icon="lucide:rewind"
+  />
+  <FeatureCard
+    title="Behavioral Analytics"
+    description="Surfaces patterns like performance after losing streaks, deviation from plan, and overtrading — the stuff that's hard to see in the moment."
+    icon="lucide:brain"
+  />
+  <FeatureCard
+    title="Rule Discovery & Optimization"
+    description="Suggests rule changes based on real trading data: lower risk after drawdowns, cooldown tuning, highest-performing setups."
+    icon="lucide:sparkles"
+  />
+</div>
+
+## Design Goals
+
+- **Professional UI** — dense, fast, and information-rich, closer to a trading terminal or mission control system than a typical dashboard
+- **Realtime architecture** — WebSocket event streams, event-driven state, replayable timelines
+- **Modular rule system** — rules can be enabled/disabled with custom thresholds, built for future plugin-style expansion
+- **Multi-exchange architecture** — exchange integrations sit behind a unified adapter interface
+- **Paper trading mode** — simulated trading without real risk, still specific to the exchange being simulated
+
+## Security: Zero-Knowledge API Keys
+
+One of the more interesting technical decisions: the backend can never decrypt your exchange API keys. When you authenticate with a passkey, the browser derives a deterministic AES-256-GCM key from the WebAuthn PRF (Pseudo-Random Function) extension — a key that never leaves the browser. Only the encrypted ciphertext is stored on the backend, keyed by user and exchange, so a full backend breach exposes no usable keys. Decryption happens client-side via the WebCrypto API, with keys held only in a short-lived in-memory object rather than a reactive store, and wiped after use. Browsers without PRF support are blocked from storing API keys at all rather than falling back to something weaker.
+
+## Architecture
+
+- **Backend**: Node.js + TypeScript on Fastify, with Supabase for auth and data storage, Zod for validation
+- **Frontend**: Vue 3 + TypeScript + Pinia, split into three layers — a Data layer (API/WebSocket calls normalized into ViewModels), a Service layer (singletons orchestrating higher-level operations), and a Presentation layer (smart components wired to services, feeding reusable dumb components)
+- **Exchange adapters** abstracted behind a unified `ExchangeAdapter` interface, so new exchanges can be added without touching the rest of the system
+- Passkey-only authentication (WebAuthn, no passwords), PostHog for analytics, GitLab CI/CD, Docker for deployment
+
+## What's Built So Far
+
+There's real code behind this already: a full Terminal view (positions, order entry, order book, chart panel, connection switcher, rule violation warnings), plus Journal, Analytics, Settings, Onboarding, and Login views. The backend has routes for rules, the trading journal, exchange credentials, passkeys, chart drawings, and settings, and the shared package defines the `ExchangeAdapter` interface every exchange integration will implement.
+
+What's still missing: an actual exchange adapter (Binance, Bybit) wired up end-to-end — so nothing can place a real trade yet. That's the next milestone.
+
+## Future Expansion
+
+Mobile companion app, prop-firm mode, team/shared accounts, AI-assisted trade review, strategy statistics, market condition classification, custom scripting/rules, a desktop app, voice alerts, performance benchmarking, replay sharing, and more advanced telemetry dashboards.

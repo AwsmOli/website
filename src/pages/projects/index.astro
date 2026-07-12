@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/ui/Container.astro';
+import ProjectCard from '../../components/project/ProjectCard.astro';
+import { STATUS_ORDER, STATUS_GROUP_LABELS } from '../../lib/project-status';
+
+const projects = await getCollection('projects');
+
+const groups = STATUS_ORDER.map((status) => ({
+  status,
+  label: STATUS_GROUP_LABELS[status],
+  projects: projects
+    .filter((project) => project.data.status === status)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+})).filter((group) => group.projects.length > 0);
+---
+
+<BaseLayout
+  title="Projects"
+  description="Hardware, software, and hybrid builds by Oliver Tulla — from trading dashboards to IoT and sim racing hardware."
+>
+  <Container class="py-16">
+    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Projects</h1>
+    <p class="mt-3 max-w-xl text-[var(--muted)]">
+      Client and professional work alongside everything I build on my own time — software,
+      hardware, and everything in between.
+    </p>
+
+    {
+      groups.map((group) => (
+        <section class="mt-12 first:mt-10">
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">
+            {group.label}
+          </h2>
+          <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {group.projects.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </Container>
+</BaseLayout>

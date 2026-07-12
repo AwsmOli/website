@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blkpixel.com/sitemap-index.xml

@@ -1,0 +1,119 @@
+---
+title: Rich Eventually
+description: >-
+  An EVE Online market arbitrage and station-trading tool — scans for
+  profitable routes and margins via the official ESI API, tracks live
+  orders, and logs P&L over time. Alpha, live on GitHub Pages.
+featured: true
+status: alpha
+date: 2026-05-10
+updated: 2026-07-12
+hero: ../../assets/projects/rich-eventually-station.png
+gallery:
+  - ../../assets/projects/rich-eventually-hauling.png
+  - ../../assets/projects/rich-eventually-dashboard.png
+  - ../../assets/projects/rich-eventually-tradelog.png
+tags:
+  - webapp
+  - eve-online
+  - trading
+technologies:
+  - Vue 3
+  - TypeScript
+  - EVE ESI API
+difficulty: intermediate
+github: https://github.com/awsmoli/rich-eventually
+demo: https://awsmoli.github.io/rich-eventually/
+license: All rights reserved
+---
+
+import { Image } from 'astro:assets';
+import FeatureCard from '../../components/project/FeatureCard.astro';
+import haulingScreenshot from '../../assets/projects/rich-eventually-hauling.png';
+import dashboardScreenshot from '../../assets/projects/rich-eventually-dashboard.png';
+import tradeLogScreenshot from '../../assets/projects/rich-eventually-tradelog.png';
+
+## Overview
+
+The same arbitrage-hunting itch as my [Market Maker / Arbitrage Trading Bot](/projects/market-maker-bot) side project, aimed at EVE Online's in-game economy instead. Logs in via EVE SSO, then scans station and market data through the ESI API for profitable arbitrage and station trading — with a full dashboard to track how it's actually going.
+
+## Features
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <FeatureCard
+    title="Station Trading Scanner"
+    description="Scans a chosen trade hub for profitable buy/sell margins, with filters for minimum margin, minimum profit per unit, item value range, and broker/accounting fee level — sortable by ISK volume, margin, or profit."
+    icon="lucide:store"
+  />
+  <FeatureCard
+    title="Hauling / Arbitrage Finder"
+    description="Finds buy-here-sell-there routes across one region or all of them, filtered by cargo hold, max investment, max jumps, and route security — ranked by profit per jump."
+    icon="lucide:route"
+  />
+  <FeatureCard
+    title="Live Order Tracking"
+    description="Watches open sell and buy orders against the live market and flags when they've been undercut or outbid, so you know when it's time to reprice."
+    icon="lucide:list-checks"
+  />
+  <FeatureCard
+    title="P&L Dashboard"
+    description="Daily P&L, net worth over time, and a top-performers table by total profit — a running scoreboard of how the trading is actually going."
+    icon="lucide:bar-chart-3"
+  />
+  <FeatureCard
+    title="Trade Log"
+    description="Every closed sell order logged automatically with quantity, sell price, and estimated profit."
+    icon="lucide:scroll-text"
+  />
+</div>
+
+Still alpha — functional and live on GitHub Pages, but rough around the edges.
+
+## Station Trading
+
+The Station tab scans a single trade hub (Jita, by default) for items worth flipping locally: buy on the sell order, resell on your own sell order, pocket the spread. Filters narrow the scan down to what's actually worth bothering with — minimum margin %, minimum profit per unit, minimum average daily trades, item value range, and your accounting/broker fee skill levels — and the results table sorts by ISK volume, margin, or profit so the noise stays out of the way.
+
+Next to it, the Orders panel tracks every open sell and buy order in real time and flags the moment one gets undercut or outbid, plus a rolling list of what was traded most recently. It's the difference between guessing when to reprice and actually knowing.
+
+## Hauling / Arbitrage
+
+The Hauling tab is the interregional version: find where something is cheap and where it sells for more, then work out if hauling it there is worth the cargo space and the risk. You can scan one region or all of them at once, optionally pin a from/to system, and exclude specific systems from the route (looking at you, Uedama). Filters cap cargo hold, max investment, max jumps, and preferred route security, with a configurable number of route evaluations to control how exhaustive the search is.
+
+Each result shows the buy and sell stations, instant vs. sell-order pricing (and how both compare to the 90-day average), units to buy, total investment, profit per jump for both instant and sell-order execution, cargo volume, jump count, average daily trades, and a route security indicator — everything needed to decide if a route is actually worth flying.
+
+<div class="not-prose my-8">
+  <Image
+    src={haulingScreenshot}
+    alt="Rich Eventually hauling/arbitrage route finder"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)] object-cover"
+  />
+</div>
+
+## Other Tabs
+
+- **Manufacturing** — on the nav, not built yet. The plan is to surface build-vs-buy opportunities (manufacturing cost vs. market price), but right now it's just a placeholder tab.
+- **Assets** — a view over everything the character owns across all locations, pulled from the EVE ESI API.
+- **Journal** — the wallet's transaction ledger (market transactions, broker fees, taxes, and everything else that moves ISK), also via ESI.
+
+## Analytics & Trade Log
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-2">
+  <figure class="m-0">
+    <Image
+      src={dashboardScreenshot}
+      alt="Rich Eventually P&L dashboard with daily P&L and net worth charts"
+      class="w-full rounded-[var(--radius-xl)] border border-[var(--border)] object-cover"
+    />
+    <figcaption class="mt-2 text-sm text-[var(--muted)]">P&L dashboard</figcaption>
+  </figure>
+  <figure class="m-0">
+    <Image
+      src={tradeLogScreenshot}
+      alt="Rich Eventually trade log of closed sell orders"
+      class="w-full rounded-[var(--radius-xl)] border border-[var(--border)] object-cover"
+    />
+    <figcaption class="mt-2 text-sm text-[var(--muted)]">Trade log</figcaption>
+  </figure>
+</div>
+
+The dashboard tracks total profit, last-7-day profit, sell hit rate, wallet balance, and broker fees at a glance, with a daily P&L bar chart and a net-worth line chart underneath. The trade log is a straightforward running list of every closed sell order — date, item, quantity, sell price, and estimated profit where it's known.
