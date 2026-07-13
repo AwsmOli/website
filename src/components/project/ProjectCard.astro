@@ -7,9 +7,10 @@ import { statusBadgeVariant } from '../../lib/project-status';
 
 interface Props {
   project: CollectionEntry<'projects'>;
+  priority?: boolean;
 }
 
-const { project } = Astro.props;
+const { project, priority = false } = Astro.props;
 const { title, description, hero, status, technologies, duration } = project.data;
 
 const dateRange =
@@ -18,7 +19,15 @@ const dateRange =
 ---
 
 <Card href={`/projects/${project.id}`}>
-  <Image src={hero} alt={title} width={480} height={270} class="aspect-video w-full rounded-t-[var(--radius-xl)] object-cover" />
+  <Image
+    src={hero}
+    alt={title}
+    width={480}
+    height={270}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    class="aspect-video w-full rounded-t-[var(--radius-xl)] object-cover"
+  />
   <div class="flex flex-col gap-3 p-5">
     <div class="flex items-center justify-between gap-2">
       <h3 class="font-semibold">{title}</h3>

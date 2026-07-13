@@ -14,6 +14,8 @@ const groups = STATUS_ORDER.map((status) => ({
     .filter((project) => project.data.status === status)
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
 })).filter((group) => group.projects.length > 0);
+
+const firstProjectId = groups[0]?.projects[0]?.id;
 ---
 
 <BaseLayout
@@ -35,7 +37,7 @@ const groups = STATUS_ORDER.map((status) => ({
           </h2>
           <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {group.projects.map((project) => (
-              <ProjectCard project={project} />
+              <ProjectCard project={project} priority={project.id === firstProjectId} />
             ))}
           </div>
         </section>
