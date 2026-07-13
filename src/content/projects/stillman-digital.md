@@ -6,7 +6,7 @@ description: >-
 featured: false
 status: released
 date: 2023-09-01
-hero: ../../assets/projects/stillman-digital.svg
+hero: ../../assets/projects/stillman-digital-banner.png
 tags:
   - work
   - fintech

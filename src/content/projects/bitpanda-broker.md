@@ -8,7 +8,7 @@ featured: false
 status: released
 date: 2017-12-01
 updated: 2018-05-01
-hero: ../../assets/projects/bitpanda-broker.svg
+hero: ../../assets/projects/bitpanda-broker-banner.png
 tags:
   - work
   - fintech

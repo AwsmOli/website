@@ -7,7 +7,7 @@ featured: false
 status: released
 date: 2013-07-01
 updated: 2016-03-01
-hero: ../../assets/projects/tricentis.svg
+hero: ../../assets/projects/tricentis-banner.png
 tags:
   - work
 technologies:

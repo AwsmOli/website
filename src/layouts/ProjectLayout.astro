@@ -12,14 +12,26 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, description, hero, status, difficulty, duration, technologies, github, demo, bom } =
-  project.data;
+const {
+  title,
+  description,
+  hero,
+  status,
+  difficulty,
+  duration,
+  technologies,
+  github,
+  demo,
+  bom,
+  tags,
+} = project.data;
+const isWork = tags.includes('work');
 ---
 
 <BaseLayout title={title} description={description} type="article">
   <Container class="py-12">
     <div class="flex flex-wrap items-center gap-2 text-xs">
-      <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
+      {!isWork && <Badge variant={statusBadgeVariant(status)}>{status}</Badge>}
       {difficulty && <Badge>{difficulty}</Badge>}
       {duration && <Badge>{duration}</Badge>}
     </div>

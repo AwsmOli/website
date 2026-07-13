@@ -11,7 +11,8 @@ interface Props {
 }
 
 const { project, priority = false } = Astro.props;
-const { title, description, hero, status, technologies, duration } = project.data;
+const { title, description, hero, status, technologies, duration, tags } = project.data;
+const isWork = tags.includes('work');
 
 const dateRange =
   duration ??
@@ -31,7 +32,7 @@ const dateRange =
   <div class="flex flex-col gap-3 p-5">
     <div class="flex items-center justify-between gap-2">
       <h3 class="font-semibold">{title}</h3>
-      <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
+      {!isWork && <Badge variant={statusBadgeVariant(status)}>{status}</Badge>}
     </div>
     <p class="text-xs font-medium text-[var(--muted)]">{dateRange}</p>
     <p class="text-sm text-[var(--muted)]">{description}</p>

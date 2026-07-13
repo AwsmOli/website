@@ -8,7 +8,7 @@ featured: false
 status: released
 date: 2016-09-01
 updated: 2017-12-01
-hero: ../../assets/projects/connectz.svg
+hero: ../../assets/projects/connectz-banner.png
 tags:
   - work
   - mobile

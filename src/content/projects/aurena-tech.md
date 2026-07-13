@@ -8,7 +8,7 @@ featured: false
 status: released
 date: 2023-03-01
 updated: 2023-12-01
-hero: ../../assets/projects/aurena-tech.svg
+hero: ../../assets/projects/aurena-tech-banner.png
 tags:
   - work
   - webapp

@@ -8,7 +8,7 @@ featured: true
 status: released
 date: 2018-05-01
 updated: 2022-12-01
-hero: ../../assets/projects/bitpanda-pro.svg
+hero: ../../assets/projects/bitpanda-pro-banner.png
 tags:
   - work
   - fintech
