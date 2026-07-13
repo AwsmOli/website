@@ -7,12 +7,17 @@ import { STATUS_ORDER, STATUS_GROUP_LABELS } from '../../lib/project-status';
 
 const projects = await getCollection('projects');
 
+const isWork = (project: (typeof projects)[number]) => project.data.tags.includes('work');
+
 const groups = STATUS_ORDER.map((status) => ({
   status,
   label: STATUS_GROUP_LABELS[status],
   projects: projects
     .filter((project) => project.data.status === status)
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    .sort((a, b) => {
+      const workDiff = Number(isWork(b)) - Number(isWork(a));
+      return workDiff !== 0 ? workDiff : b.data.date.valueOf() - a.data.date.valueOf();
+    }),
 })).filter((group) => group.projects.length > 0);
 
 const firstProjectId = groups[0]?.projects[0]?.id;
