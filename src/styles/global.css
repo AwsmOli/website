@@ -23,7 +23,10 @@
 }
 
 /* CSS variables (not just Tailwind theme tokens) so non-utility code can read
-   them too, and so a future `.dark` override only has to redefine this block. */
+   them too, and so a future `.dark` override only has to redefine this block.
+   --accent-solid is separate from --accent: in dark mode the lighter --accent
+   reads fine as text/borders against the dark background, but fails WCAG AA
+   as a solid fill under white button text, so solid fills use a darker blue. */
 :root {
   --bg: var(--color-bg);
   --fg: var(--color-fg);
@@ -33,6 +36,8 @@
   --accent: var(--color-accent);
   --accent-hover: var(--color-accent-hover);
   --accent-fg: var(--color-accent-fg);
+  --accent-solid: var(--color-accent);
+  --accent-solid-hover: var(--color-accent-hover);
 }
 
 :root.dark {
@@ -44,6 +49,8 @@
   --accent: #3b82f6;
   --accent-hover: #60a5fa;
   --accent-fg: #ffffff;
+  --accent-solid: #2563eb;
+  --accent-solid-hover: #1d4ed8;
 }
 
 html {
@@ -61,6 +68,6 @@ body {
 }
 
 ::selection {
-  background-color: var(--accent);
+  background-color: var(--accent-solid);
   color: var(--accent-fg);
 }

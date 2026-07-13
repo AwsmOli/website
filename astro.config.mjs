@@ -10,6 +10,9 @@ import icon from 'astro-icon';
 export default defineConfig({
   site: 'https://blkpixel.com',
   integrations: [mdx(), vue(), sitemap(), icon()],
+  build: {
+    inlineStylesheets: 'always',
+  },
   vite: {
     plugins: [tailwindcss()],
   },
