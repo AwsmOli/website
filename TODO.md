@@ -32,7 +32,6 @@
 
 - [ ] Review/edit the AI-drafted About page bio
 - [ ] Produce a real publishable CV PDF and add a Download PDF button on /cv
-- [ ] Wire up a real contact form (e.g. Formspree)
 - [ ] Add LICENSE files on GitHub for Daily Grind, Rich Eventually, Live Timing Dashboard
 - [x] Decide which projects should be featured on the homepage
   Now OpenTag, Live Timing Dashboard, Rich Eventually, and Risk Trader are featured:true.
