@@ -1,0 +1,174 @@
+---
+title: Exxeed
+description: >-
+  A desktop coach for iRacing that tells you where to brake using landmarks
+  you can actually see — and stops talking once you've learned the corner.
+featured: false
+status: concept
+date: 2026-07-12
+updated: 2026-08-27
+hero: ../../assets/projects/exxeed.svg
+tags:
+  - sim-racing
+  - motorsport
+  - service
+technologies:
+  - TypeScript
+  - Electron
+  - Vue 3
+  - Node.js
+  - Vitest
+  - Supabase
+  - pnpm
+github: https://github.com/AwsmOli/exxeed
+difficulty: advanced
+license: MIT
+---
+
+import FeatureCard from '../../components/project/FeatureCard.astro';
+
+## Overview
+
+Exxeed is a desktop app for iRacing that tells you **where** to brake, in terms
+you can see out of the windscreen, at the moment you need to hear it.
+
+```
+"Brake at the hundred board"    → fires ~1.7s before the braking point
+"Kerb — throttle"               → fires at the apex
+"Stay inside for the next one"  → fires on exit
+```
+
+Pacenotes, essentially — the co-driver idea from rallying, applied to circuit
+racing and driven by live telemetry instead of a recce.
+
+## Why This Doesn't Already Exist
+
+The telemetry coaches that exist today are **delta coaches**. They compare your
+lap against a reference and report the difference: *"brake 10 metres later."*
+That's genuinely useful — but only once you already know roughly where to brake.
+On a track you've never seen, it's advice about a decision you don't yet know how
+to make.
+
+The reference lap does contain the braking point. It just holds it as *"2,340
+metres into the lap"* — a number that means nothing to a human travelling at
+250 km/h. The missing piece is the translation from **lap distance** into a
+**visual landmark**, and right now that translation exists in exactly one place:
+YouTube lap guides, which you have to watch, pause, re-watch, and then somehow
+carry into the car three corners at a time.
+
+So the product is: extract that translation once, deliver it by voice at the right
+instant, and **stop saying it once you've learned it.**
+
+## Two Data Sources
+
+Neither source is sufficient on its own, and the split between them is what makes
+the whole thing work:
+
+| Source | Provides |
+| --- | --- |
+| Telemetry | **Where** — precise lap distance for brake onset, apex, throttle-on |
+| Video transcripts | **What to call it** — "the 100 board", "the bridge", "where the kerb goes red" |
+
+This also resolves the car problem. A landmark is a fixed physical object that
+never moves — but *which* landmark is correct changes per car. A GT3 brakes at the
+100 board where an LMP2 brakes at the 50 and an MX-5 at the 150. So there's one
+landmark inventory per circuit, and many note sets selecting from it.
+
+## Core Features
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <FeatureCard
+    title="Speed-Aware Triggering"
+    description="Callouts fire on distance-to-event computed each tick, never on a fixed point on the track. At 250 km/h a two-second callout has to start 173 m early; at 90 km/h it doesn't."
+    icon="lucide:gauge"
+  />
+  <FeatureCard
+    title="Landmark Anchoring"
+    description="Notes point at a physical object by ID, not at a position. Correct where the 100 board actually is, once, and every note set for that circuit corrects itself."
+    icon="lucide:map-pin"
+  />
+  <FeatureCard
+    title="Callouts That Fade"
+    description="Once you've hit a braking point within 15 m three laps running, that callout goes quiet — with hysteresis, so it doesn't flicker back on when you're borderline."
+    icon="lucide:volume-x"
+    items={['Per corner, per phase', 'Comes back when you regress', 'Valid laps only']}
+  />
+  <FeatureCard
+    title="Scheduler With Fallbacks"
+    description="One voice channel and a short queue. If the full sentence won't fit before the corner arrives, it plays the short form; if that won't fit either, it stays silent."
+    icon="lucide:list-ordered"
+    items={['A late braking cue is worse than none']}
+  />
+  <FeatureCard
+    title="Note Editor"
+    description="An SVG map of the circuit showing every note in place, with the stretch of track each callout will be speaking over shaded in — so overlaps and callouts that start before the previous corner are visible instead of discovered mid-lap."
+    icon="lucide:pencil-ruler"
+  />
+  <FeatureCard
+    title="Video Ingest Pipeline"
+    description="A YouTube lap guide goes in, a reviewed and voiced note set comes out. Built as a funnel so the silent hotlaps with music over them die at stage one instead of stage six."
+    icon="lucide:youtube"
+    items={['Triage', 'Extraction', 'Telemetry validation', 'Human review', 'TTS render']}
+  />
+  <FeatureCard
+    title="Reference Overlays"
+    description="Your throttle and brake traces against a reference lap, on a shared distance grid, plus a delta bar. Seeing your brake trace start after the reference marker is the most legible feedback in the app."
+    icon="lucide:activity"
+  />
+  <FeatureCard
+    title="Offline By Default"
+    description="Everything on disk, no account needed. The repository layer is shaped for a hosted backend so sharing note sets can land later, but a network blip mid-stint can never stop the callouts."
+    icon="lucide:wifi-off"
+  />
+</div>
+
+## Architecture
+
+The system splits along a build-time / run-time line, and keeping that line sharp
+is the main design discipline:
+
+```
+GENERATION (offline, slow, AI in the loop)
+  recorded lap  ──► track map + centreline + landmark inventory
+  YouTube video ──► note set ──► human review ──► audio pack
+                                     │
+                                     ▼
+RUNTIME (online, 60 Hz, dumb, deterministic)
+  telemetry + config ──► trigger ──► speak ──► fade
+```
+
+**The runtime is deliberately stupid.** It performs no analysis, calls no model,
+needs no network, and makes no decision that isn't already in its config. It reads
+pre-computed artefacts and fires pre-rendered audio.
+
+That's what buys everything else: it's fast, it works offline, it can be tested
+against a recorded lap instead of a driving session, and it's free to run — the AI
+cost is paid once per video, never per user and never per lap.
+
+The rest follows from a few deliberate constraints. Audio is WAV preloaded into
+memory, never MP3, because decode latency at trigger time is unacceptable. Timing
+lives in the Electron main process, never a renderer, because renderers get
+throttled when they're occluded. Everything internal is SI units, with km/h
+appearing only in render code — enforced by the type system rather than by
+convention.
+
+## Roadmap
+
+- **M0** — Electron shell, telemetry at 60 Hz, always-on lap recording
+- **M1** — replay harness and track map generation from a recorded lap
+- **M2** — the note engine: trigger, schedule, speak
+- **M3** — reference trace and delta overlays
+- **M4** — fading and per-driver profile
+- **M5** — video ingest pipeline and the note editor
+- **M6** — Windows installer and first-run setup
+
+## Status
+
+The build spec is written and the skeleton is up: a strict TypeScript monorepo,
+the artefact schemas, the repository layer, the replay harness, and an Electron
+shell that records telemetry — all of it tested and running.
+
+None of which means it drives yet. iRacing is Windows-only and so is its telemetry
+SDK, so everything so far has been built against recorded and synthetic laps on a
+Mac. The next step needs an actual Windows machine, an actual lap, and finding out
+which way the steering angle counts.

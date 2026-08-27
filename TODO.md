@@ -28,7 +28,7 @@
 - [ ] Docker image / NPM package badges
 - [ ] CI build-status badges
 - [ ] Replace placeholder project hero/gallery SVGs with real photos
-  OpenTag (CAD/PCB/schematic) and Rich Eventually (4 screenshots) done. Still placeholder SVGs: Button Box, Daily Grind, Eldritch Farming, Live Timing Dashboard, Market Maker Bot, Overlays, RC Timing, Risk Trader, Space Game, Vantage Wheel.
+  OpenTag (CAD/PCB/schematic) and Rich Eventually (4 screenshots) done. Still placeholder SVGs: Button Box, Daily Grind, Eldritch Farming, Live Timing Dashboard, Market Maker Bot, Exxeed, RC Timing, Risk Trader, Space Game, Vantage Wheel.
 
 - [ ] Review/edit the AI-drafted About page bio
 - [ ] Produce a real publishable CV PDF and add a Download PDF button on /cv
