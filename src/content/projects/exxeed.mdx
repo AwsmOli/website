@@ -13,7 +13,6 @@ gallery:
   - ../../assets/projects/exxeed-coach.png
   - ../../assets/projects/exxeed-content.png
   - ../../assets/projects/exxeed-importer.png
-  - ../../assets/projects/exxeed-garage61.png
 tags:
   - sim-racing
   - motorsport
@@ -37,7 +36,6 @@ import editorShot from '../../assets/projects/exxeed-editor.png';
 import coachShot from '../../assets/projects/exxeed-coach.png';
 import contentShot from '../../assets/projects/exxeed-content.png';
 import importerShot from '../../assets/projects/exxeed-importer.png';
-import garage61Shot from '../../assets/projects/exxeed-garage61.png';
 import ov_inputs from '../../assets/projects/exxeed-ov-inputs.png';
 import ov_pedals from '../../assets/projects/exxeed-ov-pedals.png';
 import ov_trace from '../../assets/projects/exxeed-ov-trace.png';
@@ -69,16 +67,17 @@ part of learning it down to a minimum.
 "Stay inside for the next one"
 ```
 
-It is a track guide, but one you learn by doing. Each callout names something
-you can see from the car and comes just before you need it, so your first laps
-at a new circuit are already guided laps.
+It is your track guide video, riding along. Instead of watching it the night
+before and trying to remember it, you hear each tip at the corner it is about,
+tied to something you can see from the car. Your first laps at a new circuit
+are already guided laps.
 
 ## Who it's for
 
-**The sim racer with two hours a week.** New week, new track, and the race is
-on Thursday. You do not want to spend one of your two hours watching a video
-and the other one finding out where turn four goes. You want to be driving
-proper laps tonight.
+**The sim racer with two hours a week.** New week, new track. What is the
+fastest, most intuitive way to not just be a backmarker in the race? Not
+spending one of your two hours watching a video and the other finding out where
+turn four goes. You want to be driving proper laps tonight.
 
 **Not for the last hundredth.** If you already know your way around every
 track and are hunting your missing 0.01, you are better served by a telemetry
@@ -87,11 +86,11 @@ or coaching tool built for that. Exxeed is for the step before: getting from
 
 ## Learning by doing, not homework
 
-The usual way to learn a track is a YouTube track guide. They are good, and
-they are homework: you watch, pause, re-watch, then get in the car and try to
-remember what was said about turn seven while you are arriving at turn seven.
+You know the routine: watch the track guide, pause, rewind, then get in the car
+and try to recall what was said about turn seven while you are arriving at
+turn seven.
 
-Exxeed moves the guide into the car.
+Exxeed skips the homework and puts the guide in the car.
 
 - **Told at the corner, not the night before.** "Brake at the 100 board" arrives
   just before the 100 board does.
@@ -185,29 +184,21 @@ The editor shows the lap the way you think about it: turn by turn.
   you would hear it, so you can tune a pack without leaving the pits.
 - **Publish** it for others when it is ready.
 
-## Reference laps from Garage 61
+## Fast reference laps, from Garage 61
 
-<div class="not-prose my-8">
-  <Image
-    src={garage61Shot}
-    alt="Importing a reference lap from Garage 61"
-    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
-  />
-</div>
+When you are new to a track, your own laps are the last thing you want to be
+compared to. So Exxeed's **reference laps** are fast laps from
+[Garage 61](https://garage61.net): the lap your callouts are timed against, and
+the one the overlays compare your throttle, brake, speed and delta to.
 
-You can import a fast lap from [Garage 61](https://garage61.net) and use it as
-your **reference lap**: the lap your callouts are timed against, and the one
-the overlays compare your throttle, brake, speed and delta to.
+You do not have to do anything. The Exxeed team prepares the track map and a
+reference lap for each track and car from Garage 61, and they arrive in the app
+with the track.
 
-Connect your Garage 61 account, pick the track and car, and choose a lap. A lap
-exported from Garage 61 as a file works too.
-
-- **Your own laps by default.** A teammate's lap is offered only if you untick
-  "Only my laps", with a reminder that it is theirs to share.
-- **Your Garage 61 login stays on your PC.** Exxeed's servers never see it.
-- **Only the reference lap and track map are kept**, and shared with other
-  Exxeed drivers so the next person at that track has a map. The Garage 61
-  file itself is not stored.
+- **Laps shared on Garage 61.** Exxeed uses laps that are visible to it through
+  Garage 61's API, the same ones you could open there yourself.
+- **Only the reference lap and track map are kept.** The Garage 61 file itself
+  is not stored or passed on.
 
 ## Overlays
 
