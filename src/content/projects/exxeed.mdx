@@ -1,9 +1,9 @@
 ---
 title: Exxeed
 description: >-
-  A desktop coach for iRacing that tells you where to brake, by voice, using
-  landmarks you can see from the car. Callout packs can be written by hand,
-  imported from YouTube track guides, and shared with other drivers.
+  A track coach for iRacing, for drivers who hate learning new tracks. It talks
+  you round the circuit while you drive, so the painful first laps are over in
+  minutes instead of evenings.
 featured: false
 status: alpha
 date: 2026-07-12
@@ -56,145 +56,100 @@ import ov_fuel from '../../assets/projects/exxeed-ov-fuel.png';
 import ov_tyres from '../../assets/projects/exxeed-ov-tyres.png';
 import ov_damage from '../../assets/projects/exxeed-ov-damage.png';
 import ov_weather from '../../assets/projects/exxeed-ov-weather.png';
-import ov_callouts from '../../assets/projects/exxeed-ov-callouts.png';
-import ov_telemetry from '../../assets/projects/exxeed-ov-telemetry.png';
 
 ## Overview
 
-Exxeed is a desktop app for iRacing that tells you **where** to brake, in terms
-you can see out of the windscreen, at the moment you need to hear it.
+Exxeed is a **track coach for iRacing**, for people who hate driving new
+tracks. It talks you round the circuit while you drive, and cuts the painful
+part of learning it down to a minimum.
 
 ```
-"Brake at the hundred board"    → spoken so it ends about a second before the braking point
+"Brake at the hundred board, down to third"
 "Gas when you see the ferris wheel"
 "Stay inside for the next one"
 ```
 
-It is the co-driver idea from rallying, applied to circuit racing and driven by
-live telemetry. A set of callouts for one track and car is a **callout pack**.
-You can write one, import one from a YouTube track guide, or install one another
-driver has shared.
+It is a track guide, but one you learn by doing. Each callout names something
+you can see from the car and comes just before you need it, so your first laps
+at a new circuit are already guided laps.
 
-## Why this doesn't already exist
+## Who it's for
 
-The telemetry coaches that exist today compare your lap against a reference and
-report the difference: *"brake 10 metres later."* That is useful once you already
-know roughly where to brake. On a track you have never driven, it is advice about
-a decision you do not yet know how to make.
+**The sim racer with two hours a week.** New week, new track, and the race is
+on Thursday. You do not want to spend one of your two hours watching a video
+and the other one finding out where turn four goes. You want to be driving
+proper laps tonight.
 
-A reference lap does contain the braking point, but as *"2,340 metres into the
-lap"*, which means nothing at 250 km/h. What a driver needs is that distance
-turned into something visible: the 100 board, the end of the tyre wall, the
-ferris wheel. Today that only exists in YouTube track guides, which you watch,
-pause, re-watch, and try to remember three corners at a time.
+**Not for the last hundredth.** If you already know your way around every
+track and are hunting your missing 0.01, you are better served by a telemetry
+or coaching tool built for that. Exxeed is for the step before: getting from
+"never driven here" to "I know this place" as fast as possible.
 
-Exxeed takes both halves. **Telemetry says where** (the precise lap position of
-each braking point). **A person, or a track guide, says what to call it.** The
-app then speaks it at the right moment.
+## Learning by doing, not homework
 
-## Features
+The usual way to learn a track is a YouTube track guide. They are good, and
+they are homework: you watch, pause, re-watch, then get in the car and try to
+remember what was said about turn seven while you are arriving at turn seven.
 
-<div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+Exxeed moves the guide into the car.
+
+- **Told at the corner, not the night before.** "Brake at the 100 board" arrives
+  just before the 100 board does.
+- **Things you can see.** Boards, kerbs, the end of a tyre wall. Markers you
+  can actually look for at speed.
+- **You drive from the first minute.** The laps you would spend guessing are
+  spent learning.
+- **Never talks over your braking point.** If two calls come close together you
+  get the short version, or the less important one is skipped.
+
+## Three ways to get callouts for a track
+
+<div class="not-prose my-8 grid gap-4 sm:grid-cols-3">
   <FeatureCard
-    title="Voice callouts while you drive"
-    description="Each callout is placed at a point on the lap and starts early enough to finish about a second before you get there. If two callouts collide, the app plays a short form or stays silent rather than talk over your braking point."
-    icon="lucide:volume-2"
-  />
-  <FeatureCard
-    title="Timing from a reference lap"
-    description="The app knows how long each stretch of track takes from a reference lap, and adjusts for how fast you are going. A callout starts where the editor shows it will."
-    icon="lucide:gauge"
-  />
-  <FeatureCard
-    title="Note editor"
-    description="The track map with every callout on it, the stretch of track each one speaks over, where the reference lap braked, and its throttle and brake traces. Play lap drives the reference lap and speaks the callouts."
-    icon="lucide:pencil-ruler"
-  />
-  <FeatureCard
-    title="Import from YouTube"
-    description="Pick this week's race, find a track guide, and turn its transcript into one editable callout per corner with the AI model of your choice, on your own API key."
-    icon="lucide:youtube"
-  />
-  <FeatureCard
-    title="Track maps from one lap"
-    description="A map is cut automatically from your first clean lap, or from a lap imported from Garage 61. Corners are detected from the steering trace."
-    icon="lucide:map"
-  />
-  <FeatureCard
-    title="Shared callout packs"
-    description="Publish a pack with a description, screenshots, versions and a changelog. Others browse, star and install it. Setups and lap files can ride along."
+    title="Install a pack"
+    description="Find a callout pack another driver made for your track and car, install it, and go drive. No account needed."
     icon="lucide:package"
   />
   <FeatureCard
-    title="Overlays"
-    description="Transparent, click-through panels over the sim: track map, your pedal inputs against the reference, delta, standings, relatives, fuel and more. Shown only while iRacing is in front."
-    icon="lucide:layers"
+    title="Import a track guide"
+    description="Pick your favourite YouTube track guide and turn it into one callout per corner, with credit to whoever made it."
+    icon="lucide:youtube"
   />
   <FeatureCard
-    title="Works offline"
-    description="Everything a session needs is on disk before you leave the pits. The engine makes no network or AI calls while you drive."
-    icon="lucide:wifi-off"
+    title="Write your own"
+    description="Put your own notes on the track map, hear them against a lap, and share the pack when you are happy with it."
+    icon="lucide:pencil-ruler"
   />
 </div>
 
-## The note editor
-
-<div class="not-prose my-8">
-  <Image
-    src={editorShot}
-    alt="The Exxeed note editor: Snetterton with numbered callouts, braking zones, and the throttle and brake chart"
-    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
-  />
-</div>
-
-The editor is where a pack is written and checked.
-
-- **The lap, in order.** The list on the left shows each turn with its callouts.
-  Hover a callout or a turn and the other side lights up.
-- **Where each callout speaks.** The blue arc behind a marker is the stretch of
-  track the voice runs over, from where it starts to the callout's point. Orange
-  means two callouts overlap.
-- **Where the reference lap braked.** Red stripes show the brake on, and a red
-  bar marks where braking starts for each corner. A callout can be snapped to it.
-- **Throttle, brake and speed** for the whole lap run under the map.
-- **Play lap** drives the reference lap around the map at its real speed and
-  speaks every callout where the app would, so you hear the lap before you
-  drive it.
-- **Render audio** turns the text into speech locally with
-  [Piper](https://github.com/rhasspy/piper). Nothing is sent to a speech service.
-
-## Track Coach and callout packs
-
-<div class="not-prose my-8">
-  <Image
-    src={coachShot}
-    alt="Track Coach: the list of your own and installed callout packs"
-    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
-  />
-</div>
-
-Track Coach lists the packs you wrote and the ones you installed. The app picks
-the right one for the track and car when the sim connects. Test mode replays a
-recorded lap through the callouts and overlays without the sim.
+### Install a pack
 
 <div class="not-prose my-8">
   <Image
     src={contentShot}
-    alt="The Content tab: a callout pack page with its description, callouts, map and changelog"
+    alt="A callout pack's page in the Content tab"
     class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
   />
 </div>
 
-The **Content** tab is where packs are found. Each pack has a page with its
-description, the callouts themselves, the map, a changelog, and where it was
-adapted from. Packs have versions, so an author can improve one and everyone who
-installed it gets the update. Browsing and installing need no account; publishing
-and starring need a sign-in (Discord, Google or email).
+The **Content** tab is where packs live. Search by track and car, see what a
+pack says before you install it, and star the good ones. When an author
+improves a pack, you get the update. Packs can also carry a setup and lap
+files for the same car and track.
 
-A pack is small: about 1 KB of text. The audio is rendered on the machine that
-installs it, so only the words travel.
+<div class="not-prose my-8">
+  <Image
+    src={coachShot}
+    alt="Track Coach: your own and installed callout packs"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
+  />
+</div>
 
-## Importing a YouTube track guide
+**Track Coach** keeps your packs together and loads the right one for the
+track and car you are on. Want to hear a pack before you drive it? Test mode
+runs a lap through it without the sim.
+
+### Import a track guide
 
 <div class="not-prose my-8">
   <Image
@@ -204,60 +159,66 @@ installs it, so only the words travel.
   />
 </div>
 
-1. Pick the race: the live session, one of this week's official races, or type it in.
-2. Search for a track guide and watch it beside its transcript.
-3. Convert the transcript into one callout per corner with Claude, OpenAI, Gemini
-   or a local model, on your own API key. Or copy the prompt into any AI chat and
-   paste the answer back.
-4. The callouts are placed on the track map, rendered to audio, and opened in the
-   editor for review. The pack keeps a credit to the guide it came from.
+1. Pick the race: the session you are in, or one of this week's official races.
+2. Find a track guide for it and watch it right there.
+3. Turn it into callouts, one per corner, each one editable.
+4. Check them on the map, and drive.
 
-## Garage 61
+### Write your own
 
 <div class="not-prose my-8">
   <Image
-    src={garage61Shot}
-    alt="Import a lap from Garage 61, with Only my laps ticked"
+    src={editorShot}
+    alt="The note editor: Snetterton with numbered callouts, braking zones, and the throttle and brake chart"
     class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
   />
 </div>
 
-Exxeed can build a track map and a reference lap from a lap in
-[Garage 61](https://garage61.net), so a driver who already logs laps there does
-not have to drive one again just to make a map.
+The editor shows the lap the way you think about it: turn by turn.
 
-**What it uses.** The documented v1 API: the signed-in driver, the track and car
-lists, a lap search, and the lap's telemetry CSV. From that one lap the app takes
-position, speed, throttle, brake, gear and steering.
+- **Every callout on the map**, with the stretch of track it is spoken over, so
+  you can see when two of them would overlap.
+- **Where the fast lap brakes.** Braking zones are drawn on the track, and a
+  callout can snap straight to the braking point.
+- **Throttle, brake and speed** for the whole lap under the map.
+- **Play lap** drives the lap around the map and speaks every callout where
+  you would hear it, so you can tune a pack without leaving the pits.
+- **Publish** it for others when it is ready.
 
-**What it makes.** The positions become the track's centreline and corners. The
-other channels are resampled onto a distance grid and become the reference lap
-that callouts are timed against and the editor draws.
+## Reference laps from Garage 61
 
-**How the data is handled.**
+<div class="not-prose my-8">
+  <Image
+    src={garage61Shot}
+    alt="Importing a reference lap from Garage 61"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
+  />
+</div>
 
-- The Garage 61 token is entered in the app, stored encrypted with the operating
-  system's keychain, and used only from that machine. It is not in the app's
-  code and is never sent to Exxeed's servers.
-- **Only the driver's own laps** are offered by default. Teammates' laps appear
-  only if the driver unticks that, with a note that the lap is the teammate's to
-  share.
-- A lap exported as a CSV from the Garage 61 website can be imported with no
-  token at all.
-- The map and the reference lap built from a lap are shared to Exxeed's database
-  when the driver is signed in to Exxeed, so other drivers get a map for that
-  track without calling Garage 61. The raw CSV is not stored or shared.
-- Requests are few: one lap per track layout, tracks that already have a map are
-  skipped, and rate-limit responses are waited out.
+You can import a fast lap from [Garage 61](https://garage61.net) and use it as
+your **reference lap**: the lap your callouts are timed against, and the one
+the overlays compare your throttle, brake, speed and delta to.
+
+Connect your Garage 61 account, pick the track and car, and choose a lap. A lap
+exported from Garage 61 as a file works too.
+
+- **Your own laps by default.** A teammate's lap is offered only if you untick
+  "Only my laps", with a reminder that it is theirs to share.
+- **Your Garage 61 login stays on your PC.** Exxeed's servers never see it.
+- **Only the reference lap and track map are kept**, and shared with other
+  Exxeed drivers so the next person at that track has a map. The Garage 61
+  file itself is not stored.
 
 ## Overlays
 
-Transparent, click-through windows over the sim. Each one is its own window
-that you drag and resize into place; layouts are saved as profiles. They are
-shown only while iRacing is the window in front (a setting).
+Exxeed comes with a full set of overlays. Place and size each one where you
+like, and save layouts as profiles: one for practice, one for racing. They hide
+when you tab out of iRacing.
 
-The pictures below use the app's built-in sample feed, the one it shows while
-you arrange overlays, so the names and numbers are made up.
+Several of them compare you to your reference lap as you drive, which is
+where a fast lap from Garage 61 earns its keep.
+
+*The pictures show sample data.*
 
 ### Driving
 
@@ -301,7 +262,7 @@ you arrange overlays, so the names and numbers are made up.
   </figure>
   <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
     <Image src={ov_reference} alt="Comparison Target overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
-    <figcaption class="mt-3 text-sm"><strong>Comparison Target.</strong> Which lap every delta is measured against, and the callout pack that is loaded.</figcaption>
+    <figcaption class="mt-3 text-sm"><strong>Comparison Target.</strong> Which lap you are being compared to.</figcaption>
   </figure>
 </div>
 
@@ -356,46 +317,13 @@ you arrange overlays, so the names and numbers are made up.
   </figure>
 </div>
 
-### Exxeed
-
-<div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
-  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
-    <Image src={ov_callouts} alt="Callouts overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
-    <figcaption class="mt-3 text-sm"><strong>Callouts.</strong> A log of what was spoken, in which form, and what was skipped and why.</figcaption>
-  </figure>
-  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
-    <Image src={ov_telemetry} alt="Telemetry overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
-    <figcaption class="mt-3 text-sm"><strong>Telemetry.</strong> The raw values the app is reading from the sim, for checking a setup.</figcaption>
-  </figure>
-</div>
-
-## How it's built
-
-```
-PREPARATION (offline, slow, AI allowed)
-  one lap          ──► track map + reference lap
-  YouTube guide    ──► callouts ──► review in the editor ──► audio
-                                     │
-                                     ▼
-DRIVING (60 Hz, no network, no AI)
-  telemetry + callout pack ──► when to speak ──► play the clip
-```
-
-While you drive, the app only reads what was prepared earlier and plays
-pre-rendered audio. That keeps it fast, lets it run offline, and means it can be
-tested against a recorded lap instead of a driving session. The AI cost is paid
-once per video, never per lap.
-
-The code is a strict TypeScript monorepo. The timing engine is a pure package
-with no file or network access, which is how it is tested without the sim.
-Sharing runs on Supabase with row-level security from the first migration.
-
 ## Status
 
-Alpha. It runs against iRacing on Windows and is developed on a Mac against
-recorded laps. Working today: callouts, the editor, YouTube import, Garage 61
-import, overlays, accounts, and publishing and installing packs.
+Exxeed is still being built. Callouts, the editor, track guide import,
+Garage 61 import, overlays and pack sharing already work, and it is being
+tested with iRacing on Windows.
 
-Not built yet: a Windows installer, a race summary after each session, themes
-for the overlays, and driver profiles with stats. Callouts that go quiet once
-you have learned a corner are planned too.
+Before release: a one-click Windows installer, and more packs for more tracks.
+
+After that: a race summary after each session, themes for the overlays, driver
+profiles with stats, and callouts that go quiet once you have learned a corner.
