@@ -1,13 +1,19 @@
 ---
 title: Exxeed
 description: >-
-  A desktop coach for iRacing that tells you where to brake using landmarks
-  you can actually see — and stops talking once you've learned the corner.
+  A desktop coach for iRacing that tells you where to brake, by voice, using
+  landmarks you can see from the car. Callout packs can be written by hand,
+  imported from YouTube track guides, and shared with other drivers.
 featured: false
-status: concept
+status: alpha
 date: 2026-07-12
-updated: 2026-08-27
-hero: ../../assets/projects/exxeed.svg
+updated: 2026-10-01
+hero: ../../assets/projects/exxeed-editor.png
+gallery:
+  - ../../assets/projects/exxeed-coach.png
+  - ../../assets/projects/exxeed-content.png
+  - ../../assets/projects/exxeed-importer.png
+  - ../../assets/projects/exxeed-garage61.png
 tags:
   - sim-racing
   - motorsport
@@ -15,17 +21,43 @@ tags:
 technologies:
   - TypeScript
   - Electron
-  - Vue 3
   - Node.js
-  - Vitest
   - Supabase
+  - Piper TTS
+  - Vitest
   - pnpm
 github: https://github.com/AwsmOli/exxeed
 difficulty: advanced
 license: MIT
 ---
 
+import { Image } from 'astro:assets';
 import FeatureCard from '../../components/project/FeatureCard.astro';
+import editorShot from '../../assets/projects/exxeed-editor.png';
+import coachShot from '../../assets/projects/exxeed-coach.png';
+import contentShot from '../../assets/projects/exxeed-content.png';
+import importerShot from '../../assets/projects/exxeed-importer.png';
+import garage61Shot from '../../assets/projects/exxeed-garage61.png';
+import ov_inputs from '../../assets/projects/exxeed-ov-inputs.png';
+import ov_pedals from '../../assets/projects/exxeed-ov-pedals.png';
+import ov_trace from '../../assets/projects/exxeed-ov-trace.png';
+import ov_speed from '../../assets/projects/exxeed-ov-speed.png';
+import ov_brake from '../../assets/projects/exxeed-ov-brake.png';
+import ov_delta from '../../assets/projects/exxeed-ov-delta.png';
+import ov_sectors from '../../assets/projects/exxeed-ov-sectors.png';
+import ov_corners from '../../assets/projects/exxeed-ov-corners.png';
+import ov_reference from '../../assets/projects/exxeed-ov-reference.png';
+import ov_standings from '../../assets/projects/exxeed-ov-standings.png';
+import ov_relative from '../../assets/projects/exxeed-ov-relative.png';
+import ov_radar from '../../assets/projects/exxeed-ov-radar.png';
+import ov_map from '../../assets/projects/exxeed-ov-map.png';
+import ov_minimap from '../../assets/projects/exxeed-ov-minimap.png';
+import ov_fuel from '../../assets/projects/exxeed-ov-fuel.png';
+import ov_tyres from '../../assets/projects/exxeed-ov-tyres.png';
+import ov_damage from '../../assets/projects/exxeed-ov-damage.png';
+import ov_weather from '../../assets/projects/exxeed-ov-weather.png';
+import ov_callouts from '../../assets/projects/exxeed-ov-callouts.png';
+import ov_telemetry from '../../assets/projects/exxeed-ov-telemetry.png';
 
 ## Overview
 
@@ -33,142 +65,337 @@ Exxeed is a desktop app for iRacing that tells you **where** to brake, in terms
 you can see out of the windscreen, at the moment you need to hear it.
 
 ```
-"Brake at the hundred board"    → fires ~1.7s before the braking point
-"Kerb — throttle"               → fires at the apex
-"Stay inside for the next one"  → fires on exit
+"Brake at the hundred board"    → spoken so it ends about a second before the braking point
+"Gas when you see the ferris wheel"
+"Stay inside for the next one"
 ```
 
-Pacenotes, essentially — the co-driver idea from rallying, applied to circuit
-racing and driven by live telemetry instead of a recce.
+It is the co-driver idea from rallying, applied to circuit racing and driven by
+live telemetry. A set of callouts for one track and car is a **callout pack**.
+You can write one, import one from a YouTube track guide, or install one another
+driver has shared.
 
-## Why This Doesn't Already Exist
+## Why this doesn't already exist
 
-The telemetry coaches that exist today are **delta coaches**. They compare your
-lap against a reference and report the difference: *"brake 10 metres later."*
-That's genuinely useful — but only once you already know roughly where to brake.
-On a track you've never seen, it's advice about a decision you don't yet know how
-to make.
+The telemetry coaches that exist today compare your lap against a reference and
+report the difference: *"brake 10 metres later."* That is useful once you already
+know roughly where to brake. On a track you have never driven, it is advice about
+a decision you do not yet know how to make.
 
-The reference lap does contain the braking point. It just holds it as *"2,340
-metres into the lap"* — a number that means nothing to a human travelling at
-250 km/h. The missing piece is the translation from **lap distance** into a
-**visual landmark**, and right now that translation exists in exactly one place:
-YouTube lap guides, which you have to watch, pause, re-watch, and then somehow
-carry into the car three corners at a time.
+A reference lap does contain the braking point, but as *"2,340 metres into the
+lap"*, which means nothing at 250 km/h. What a driver needs is that distance
+turned into something visible: the 100 board, the end of the tyre wall, the
+ferris wheel. Today that only exists in YouTube track guides, which you watch,
+pause, re-watch, and try to remember three corners at a time.
 
-So the product is: extract that translation once, deliver it by voice at the right
-instant, and **stop saying it once you've learned it.**
+Exxeed takes both halves. **Telemetry says where** (the precise lap position of
+each braking point). **A person, or a track guide, says what to call it.** The
+app then speaks it at the right moment.
 
-## Two Data Sources
-
-Neither source is sufficient on its own, and the split between them is what makes
-the whole thing work:
-
-| Source | Provides |
-| --- | --- |
-| Telemetry | **Where** — precise lap distance for brake onset, apex, throttle-on |
-| Video transcripts | **What to call it** — "the 100 board", "the bridge", "where the kerb goes red" |
-
-This also resolves the car problem. A landmark is a fixed physical object that
-never moves — but *which* landmark is correct changes per car. A GT3 brakes at the
-100 board where an LMP2 brakes at the 50 and an MX-5 at the 150. So there's one
-landmark inventory per circuit, and many note sets selecting from it.
-
-## Core Features
+## Features
 
 <div class="not-prose my-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
   <FeatureCard
-    title="Speed-Aware Triggering"
-    description="Callouts fire on distance-to-event computed each tick, never on a fixed point on the track. At 250 km/h a two-second callout has to start 173 m early; at 90 km/h it doesn't."
+    title="Voice callouts while you drive"
+    description="Each callout is placed at a point on the lap and starts early enough to finish about a second before you get there. If two callouts collide, the app plays a short form or stays silent rather than talk over your braking point."
+    icon="lucide:volume-2"
+  />
+  <FeatureCard
+    title="Timing from a reference lap"
+    description="The app knows how long each stretch of track takes from a reference lap, and adjusts for how fast you are going. A callout starts where the editor shows it will."
     icon="lucide:gauge"
   />
   <FeatureCard
-    title="Landmark Anchoring"
-    description="Notes point at a physical object by ID, not at a position. Correct where the 100 board actually is, once, and every note set for that circuit corrects itself."
-    icon="lucide:map-pin"
-  />
-  <FeatureCard
-    title="Callouts That Fade"
-    description="Once you've hit a braking point within 15 m three laps running, that callout goes quiet — with hysteresis, so it doesn't flicker back on when you're borderline."
-    icon="lucide:volume-x"
-    items={['Per corner, per phase', 'Comes back when you regress', 'Valid laps only']}
-  />
-  <FeatureCard
-    title="Scheduler With Fallbacks"
-    description="One voice channel and a short queue. If the full sentence won't fit before the corner arrives, it plays the short form; if that won't fit either, it stays silent."
-    icon="lucide:list-ordered"
-    items={['A late braking cue is worse than none']}
-  />
-  <FeatureCard
-    title="Note Editor"
-    description="An SVG map of the circuit showing every note in place, with the stretch of track each callout will be speaking over shaded in — so overlaps and callouts that start before the previous corner are visible instead of discovered mid-lap."
+    title="Note editor"
+    description="The track map with every callout on it, the stretch of track each one speaks over, where the reference lap braked, and its throttle and brake traces. Play lap drives the reference lap and speaks the callouts."
     icon="lucide:pencil-ruler"
   />
   <FeatureCard
-    title="Video Ingest Pipeline"
-    description="A YouTube lap guide goes in, a reviewed and voiced note set comes out. Built as a funnel so the silent hotlaps with music over them die at stage one instead of stage six."
+    title="Import from YouTube"
+    description="Pick this week's race, find a track guide, and turn its transcript into one editable callout per corner with the AI model of your choice, on your own API key."
     icon="lucide:youtube"
-    items={['Triage', 'Extraction', 'Telemetry validation', 'Human review', 'TTS render']}
   />
   <FeatureCard
-    title="Reference Overlays"
-    description="Your throttle and brake traces against a reference lap, on a shared distance grid, plus a delta bar. Seeing your brake trace start after the reference marker is the most legible feedback in the app."
-    icon="lucide:activity"
+    title="Track maps from one lap"
+    description="A map is cut automatically from your first clean lap, or from a lap imported from Garage 61. Corners are detected from the steering trace."
+    icon="lucide:map"
   />
   <FeatureCard
-    title="Offline By Default"
-    description="Everything on disk, no account needed. The repository layer is shaped for a hosted backend so sharing note sets can land later, but a network blip mid-stint can never stop the callouts."
+    title="Shared callout packs"
+    description="Publish a pack with a description, screenshots, versions and a changelog. Others browse, star and install it. Setups and lap files can ride along."
+    icon="lucide:package"
+  />
+  <FeatureCard
+    title="Overlays"
+    description="Transparent, click-through panels over the sim: track map, your pedal inputs against the reference, delta, standings, relatives, fuel and more. Shown only while iRacing is in front."
+    icon="lucide:layers"
+  />
+  <FeatureCard
+    title="Works offline"
+    description="Everything a session needs is on disk before you leave the pits. The engine makes no network or AI calls while you drive."
     icon="lucide:wifi-off"
   />
 </div>
 
-## Architecture
+## The note editor
 
-The system splits along a build-time / run-time line, and keeping that line sharp
-is the main design discipline:
+<div class="not-prose my-8">
+  <Image
+    src={editorShot}
+    alt="The Exxeed note editor: Snetterton with numbered callouts, braking zones, and the throttle and brake chart"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
+  />
+</div>
+
+The editor is where a pack is written and checked.
+
+- **The lap, in order.** The list on the left shows each turn with its callouts.
+  Hover a callout or a turn and the other side lights up.
+- **Where each callout speaks.** The blue arc behind a marker is the stretch of
+  track the voice runs over, from where it starts to the callout's point. Orange
+  means two callouts overlap.
+- **Where the reference lap braked.** Red stripes show the brake on, and a red
+  bar marks where braking starts for each corner. A callout can be snapped to it.
+- **Throttle, brake and speed** for the whole lap run under the map.
+- **Play lap** drives the reference lap around the map at its real speed and
+  speaks every callout where the app would, so you hear the lap before you
+  drive it.
+- **Render audio** turns the text into speech locally with
+  [Piper](https://github.com/rhasspy/piper). Nothing is sent to a speech service.
+
+## Track Coach and callout packs
+
+<div class="not-prose my-8">
+  <Image
+    src={coachShot}
+    alt="Track Coach: the list of your own and installed callout packs"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
+  />
+</div>
+
+Track Coach lists the packs you wrote and the ones you installed. The app picks
+the right one for the track and car when the sim connects. Test mode replays a
+recorded lap through the callouts and overlays without the sim.
+
+<div class="not-prose my-8">
+  <Image
+    src={contentShot}
+    alt="The Content tab: a callout pack page with its description, callouts, map and changelog"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
+  />
+</div>
+
+The **Content** tab is where packs are found. Each pack has a page with its
+description, the callouts themselves, the map, a changelog, and where it was
+adapted from. Packs have versions, so an author can improve one and everyone who
+installed it gets the update. Browsing and installing need no account; publishing
+and starring need a sign-in (Discord, Google or email).
+
+A pack is small: about 1 KB of text. The audio is rendered on the machine that
+installs it, so only the words travel.
+
+## Importing a YouTube track guide
+
+<div class="not-prose my-8">
+  <Image
+    src={importerShot}
+    alt="The YouTube importer, listing this week's official iRacing races"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
+  />
+</div>
+
+1. Pick the race: the live session, one of this week's official races, or type it in.
+2. Search for a track guide and watch it beside its transcript.
+3. Convert the transcript into one callout per corner with Claude, OpenAI, Gemini
+   or a local model, on your own API key. Or copy the prompt into any AI chat and
+   paste the answer back.
+4. The callouts are placed on the track map, rendered to audio, and opened in the
+   editor for review. The pack keeps a credit to the guide it came from.
+
+## Garage 61
+
+<div class="not-prose my-8">
+  <Image
+    src={garage61Shot}
+    alt="Import a lap from Garage 61, with Only my laps ticked"
+    class="w-full rounded-[var(--radius-xl)] border border-[var(--border)]"
+  />
+</div>
+
+Exxeed can build a track map and a reference lap from a lap in
+[Garage 61](https://garage61.net), so a driver who already logs laps there does
+not have to drive one again just to make a map.
+
+**What it uses.** The documented v1 API: the signed-in driver, the track and car
+lists, a lap search, and the lap's telemetry CSV. From that one lap the app takes
+position, speed, throttle, brake, gear and steering.
+
+**What it makes.** The positions become the track's centreline and corners. The
+other channels are resampled onto a distance grid and become the reference lap
+that callouts are timed against and the editor draws.
+
+**How the data is handled.**
+
+- The Garage 61 token is entered in the app, stored encrypted with the operating
+  system's keychain, and used only from that machine. It is not in the app's
+  code and is never sent to Exxeed's servers.
+- **Only the driver's own laps** are offered by default. Teammates' laps appear
+  only if the driver unticks that, with a note that the lap is the teammate's to
+  share.
+- A lap exported as a CSV from the Garage 61 website can be imported with no
+  token at all.
+- The map and the reference lap built from a lap are shared to Exxeed's database
+  when the driver is signed in to Exxeed, so other drivers get a map for that
+  track without calling Garage 61. The raw CSV is not stored or shared.
+- Requests are few: one lap per track layout, tracks that already have a map are
+  skipped, and rate-limit responses are waited out.
+
+## Overlays
+
+Transparent, click-through windows over the sim. Each one is its own window
+that you drag and resize into place; layouts are saved as profiles. They are
+shown only while iRacing is the window in front (a setting).
+
+The pictures below use the app's built-in sample feed, the one it shows while
+you arrange overlays, so the names and numbers are made up.
+
+### Driving
+
+<div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_inputs} alt="Essential Inputs overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Essential Inputs.</strong> Throttle and brake as a rolling trace and as bars, with speed, gear and steering.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_pedals} alt="Input Telemetry overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Input Telemetry.</strong> The fuller version: adds the reference lap's speed and gear under yours, the live delta and the steering angle.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_trace} alt="Input Comparison overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Input Comparison.</strong> Your throttle and brake against the reference lap over the track just ahead, with the reference braking point marked.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_speed} alt="Speed Comparison overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Speed Comparison.</strong> Your speed against the reference lap's over the next few hundred metres.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_brake} alt="Brake Indicator overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Brake Indicator.</strong> A countdown bar to the reference braking point, in metres.</figcaption>
+  </figure>
+</div>
+
+### Timing
+
+<div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_delta} alt="Delta Bar overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Delta Bar.</strong> Time gained or lost against the reference lap, live.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_sectors} alt="Delta Sectors overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Delta Sectors.</strong> The delta per sector, with best, last and reference lap times.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_corners} alt="Corner Analysis overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Corner Analysis.</strong> Time gained or lost in the corner just taken and the apex speed difference, with the speed trace through it.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_reference} alt="Comparison Target overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Comparison Target.</strong> Which lap every delta is measured against, and the callout pack that is loaded.</figcaption>
+  </figure>
+</div>
+
+### Race
+
+<div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_standings} alt="Standings overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Standings.</strong> The field by class: strength of field, licence and iRating, gap, interval, last and best lap.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_relative} alt="Relatives overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Relatives.</strong> The cars around you on track with the gap to each, plus temperatures, brake bias, incidents and time left.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_radar} alt="Radar overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Radar.</strong> Cars alongside you, with the occupied side lit.</figcaption>
+  </figure>
+</div>
+
+### Track
+
+<div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_map} alt="Track Map overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Track Map.</strong> The whole circuit with every car by class position, and where the callouts are.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_minimap} alt="Mini Map overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Mini Map.</strong> A zoomed view of the track around your car.</figcaption>
+  </figure>
+</div>
+
+### Car
+
+<div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_fuel} alt="Fuel Calculator overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Fuel Calculator.</strong> Fuel and laps left, usage per lap (last, average, max) and how much is needed to finish.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_tyres} alt="Tyres overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Tyres.</strong> Pressure, temperature across the tread and wear for each tyre, from the last pit read.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_damage} alt="Damage overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Damage.</strong> Required and optional repair time.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_weather} alt="Weather Conditions overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Weather Conditions.</strong> Sky, air and track temperature, humidity, rain, wind and how wet the track is.</figcaption>
+  </figure>
+</div>
+
+### Exxeed
+
+<div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_callouts} alt="Callouts overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Callouts.</strong> A log of what was spoken, in which form, and what was skipped and why.</figcaption>
+  </figure>
+  <figure class="m-0 rounded-[var(--radius-xl)] border border-[var(--border)] p-4">
+    <Image src={ov_telemetry} alt="Telemetry overlay" class="mx-auto max-h-64 w-auto rounded-lg" />
+    <figcaption class="mt-3 text-sm"><strong>Telemetry.</strong> The raw values the app is reading from the sim, for checking a setup.</figcaption>
+  </figure>
+</div>
+
+## How it's built
 
 ```
-GENERATION (offline, slow, AI in the loop)
-  recorded lap  ──► track map + centreline + landmark inventory
-  YouTube video ──► note set ──► human review ──► audio pack
+PREPARATION (offline, slow, AI allowed)
+  one lap          ──► track map + reference lap
+  YouTube guide    ──► callouts ──► review in the editor ──► audio
                                      │
                                      ▼
-RUNTIME (online, 60 Hz, dumb, deterministic)
-  telemetry + config ──► trigger ──► speak ──► fade
+DRIVING (60 Hz, no network, no AI)
+  telemetry + callout pack ──► when to speak ──► play the clip
 ```
 
-**The runtime is deliberately stupid.** It performs no analysis, calls no model,
-needs no network, and makes no decision that isn't already in its config. It reads
-pre-computed artefacts and fires pre-rendered audio.
+While you drive, the app only reads what was prepared earlier and plays
+pre-rendered audio. That keeps it fast, lets it run offline, and means it can be
+tested against a recorded lap instead of a driving session. The AI cost is paid
+once per video, never per lap.
 
-That's what buys everything else: it's fast, it works offline, it can be tested
-against a recorded lap instead of a driving session, and it's free to run — the AI
-cost is paid once per video, never per user and never per lap.
-
-The rest follows from a few deliberate constraints. Audio is WAV preloaded into
-memory, never MP3, because decode latency at trigger time is unacceptable. Timing
-lives in the Electron main process, never a renderer, because renderers get
-throttled when they're occluded. Everything internal is SI units, with km/h
-appearing only in render code — enforced by the type system rather than by
-convention.
-
-## Roadmap
-
-- **M0** — Electron shell, telemetry at 60 Hz, always-on lap recording
-- **M1** — replay harness and track map generation from a recorded lap
-- **M2** — the note engine: trigger, schedule, speak
-- **M3** — reference trace and delta overlays
-- **M4** — fading and per-driver profile
-- **M5** — video ingest pipeline and the note editor
-- **M6** — Windows installer and first-run setup
+The code is a strict TypeScript monorepo. The timing engine is a pure package
+with no file or network access, which is how it is tested without the sim.
+Sharing runs on Supabase with row-level security from the first migration.
 
 ## Status
 
-The build spec is written and the skeleton is up: a strict TypeScript monorepo,
-the artefact schemas, the repository layer, the replay harness, and an Electron
-shell that records telemetry — all of it tested and running.
+Alpha. It runs against iRacing on Windows and is developed on a Mac against
+recorded laps. Working today: callouts, the editor, YouTube import, Garage 61
+import, overlays, accounts, and publishing and installing packs.
 
-None of which means it drives yet. iRacing is Windows-only and so is its telemetry
-SDK, so everything so far has been built against recorded and synthetic laps on a
-Mac. The next step needs an actual Windows machine, an actual lap, and finding out
-which way the steering angle counts.
+Not built yet: a Windows installer, a race summary after each session, themes
+for the overlays, and driver profiles with stats. Callouts that go quiet once
+you have learned a corner are planned too.
