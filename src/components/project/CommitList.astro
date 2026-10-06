@@ -1,0 +1,46 @@
+---
+import type { Commit } from '../../lib/github-commits';
+
+interface Item {
+  commit: Commit;
+  project?: { title: string; href: string };
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<ol class="space-y-5 border-l border-[var(--border)] pl-6">
+  {
+    items.map(({ commit, project }) => (
+      <li>
+        <p class="text-xs text-[var(--muted)]">
+          <time datetime={commit.date.toISOString()}>{formatDate(commit.date)}</time>
+          {project && (
+            <>
+              {' '}
+              &middot;{' '}
+              <a href={project.href} class="font-medium text-[var(--accent)] hover:underline">
+                {project.title}
+              </a>
+            </>
+          )}
+        </p>
+        <a
+          href={commit.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-1 inline-block text-sm text-[var(--fg)] hover:underline"
+        >
+          {commit.message}
+        </a>
+      </li>
+    ))
+  }
+</ol>

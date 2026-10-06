@@ -5,6 +5,8 @@ import Container from '../components/ui/Container.astro';
 import Button from '../components/ui/Button.astro';
 import ProjectCard from '../components/project/ProjectCard.astro';
 import SkillsList from '../components/project/SkillsList.astro';
+import CommitList from '../components/project/CommitList.astro';
+import { getRecentCommits } from '../lib/github-commits';
 
 const cv = await getEntry('pages', 'cv');
 if (!cv || cv.data.type !== 'cv') throw new Error('CV entry missing or malformed');
@@ -12,6 +14,23 @@ if (!cv || cv.data.type !== 'cv') throw new Error('CV entry missing or malformed
 const allProjects = await getCollection('projects');
 const featuredProjects = allProjects.filter((p) => p.data.featured).slice(0, 3);
 const projectsToShow = featuredProjects.length > 0 ? featuredProjects : allProjects.slice(0, 3);
+
+// Newest commits across every project with a repo, at most 3 each so one busy project doesn't fill the list.
+const recentUpdates = (
+  await Promise.all(
+    allProjects
+      .filter((p) => p.data.github)
+      .map(async (p) =>
+        (await getRecentCommits(p.data.github!, 3)).map((commit) => ({
+          commit,
+          project: { title: p.data.title, href: `/projects/${p.id}` },
+        })),
+      ),
+  )
+)
+  .flat()
+  .sort((a, b) => b.commit.date.getTime() - a.commit.date.getTime())
+  .slice(0, 6);
 
 const recentExperience = cv.data.experience.slice(0, 4);
 ---
@@ -51,6 +70,18 @@ const recentExperience = cv.data.experience.slice(0, 4);
       {projectsToShow.map((project) => <ProjectCard project={project} />)}
     </div>
   </Container>
+
+  <!-- Recent Updates -->
+  {
+    recentUpdates.length > 0 && (
+      <Container class="pb-20">
+        <h2 class="text-2xl font-bold tracking-tight">Recent Updates</h2>
+        <div class="mt-6">
+          <CommitList items={recentUpdates} />
+        </div>
+      </Container>
+    )
+  }
 
   <!-- Experience Timeline -->
   <Container class="pb-20">

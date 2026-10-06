@@ -5,7 +5,9 @@ import BaseLayout from './BaseLayout.astro';
 import Container from '../components/ui/Container.astro';
 import Badge from '../components/ui/Badge.astro';
 import Button from '../components/ui/Button.astro';
+import CommitList from '../components/project/CommitList.astro';
 import { statusBadgeVariant } from '../lib/project-status';
+import { getRecentCommits } from '../lib/github-commits';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -26,6 +28,7 @@ const {
   tags,
 } = project.data;
 const isWork = tags.includes('work');
+const commits = github ? await getRecentCommits(github, 5) : [];
 ---
 
 <BaseLayout title={title} description={description} type="article">
@@ -71,5 +74,26 @@ const isWork = tags.includes('work');
     <article class="prose prose-neutral mt-10 max-w-none dark:prose-invert">
       <slot />
     </article>
+
+    {
+      github && commits.length > 0 && (
+        <section class="mt-14">
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold tracking-tight">Recent Updates</h2>
+            <a
+              href={`${github}/commits`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-[var(--accent)] hover:underline"
+            >
+              All commits &rarr;
+            </a>
+          </div>
+          <div class="mt-6">
+            <CommitList items={commits.map((commit) => ({ commit }))} />
+          </div>
+        </section>
+      )
+    }
   </Container>
 </BaseLayout>
